@@ -39,10 +39,10 @@ public class Robot {
      */
     public void initialize() {
         //Chassis Init
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftfront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftrear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightfront");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightrear");
+        leftFront = hardwareMap.get(DcMotorEx.class, RobotConstants.lf);
+        leftRear = hardwareMap.get(DcMotorEx.class, RobotConstants.lr);
+        rightFront = hardwareMap.get(DcMotorEx.class, RobotConstants.rf);
+        rightRear = hardwareMap.get(DcMotorEx.class, RobotConstants.rr);
 
         //Chassis Motor Config
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);

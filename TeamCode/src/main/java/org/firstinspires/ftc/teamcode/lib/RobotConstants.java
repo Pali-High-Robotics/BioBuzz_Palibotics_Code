@@ -14,5 +14,10 @@ public class RobotConstants {
 
     public static final Pose BLUE_START1_POS = new Pose();
 
+    public static final String lf = "leftfront";
+    public static final String rf = "rightfront";
+    public static final String lr = "leftrear";
+    public static final String rr = "rightrear";
+
 
 }
