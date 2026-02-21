@@ -12,30 +12,32 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+/**
+ * This is the Robot Object, which controls the robot chassis
+ * @version 1.1 - 2/21/2026
+ */
 public class Robot {
-    private HardwareMap hardwareMap;
-    private Telemetry telemetry;
+    private final HardwareMap hardwareMap;
+    private final Telemetry telemetry;
     private Follower follower;
     private DcMotor leftFront, leftRear, rightFront, rightRear;
 
     /**
-     * This is the Robot Object, which controls the robot chassis
      * @param hardwareMap hardware instance from the robot
-     * @param telemetry telemetry instance
+     * @param telemetry   telemetry instance
      */
-    public Robot(HardwareMap hardwareMap, Telemetry telemetry){
+    public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
 
     /**
-     * This initalizes everything needed for the Robot object.
+     * This initializes everything needed for the Robot object.
      * Code will not run if this method has not been called.
      *
      * @author Luca Chien - #27055 Palibotics
-     * @version 1.0.0 2/21/2026
      */
-    public void initialize(){
+    public void initialize() {
         //Chassis Init
         leftFront = hardwareMap.get(DcMotorEx.class, "leftfront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftrear");
@@ -56,9 +58,8 @@ public class Robot {
      *
      * @param gamepad the gamepad to control the robot chassis
      * @author Luca Chien - #27055 Palibotics
-     * @version 1.0.0 - 2/21/2026
      */
-    public void drive(Gamepad gamepad){
+    public void drive(Gamepad gamepad) {
         follower.update();
 
         //Calculating power
@@ -66,13 +67,17 @@ public class Robot {
         double strafe = gamepad.left_stick_x * RobotConstants.STRAFE_SPEED;
         double turn = gamepad.right_stick_x * RobotConstants.TURN_SPEED;
 
-        //Setting power to wheels
-        leftFront.setPower(drive + strafe + turn);
-        rightFront.setPower(drive - strafe - turn);
-        leftRear.setPower(drive - strafe + turn);
-        rightRear.setPower(drive + strafe - turn);
+        if (Math.abs(drive) > 0.05 || Math.abs(strafe) > 0.05 || Math.abs(turn) > 0.05) {
+            follower.breakFollowing();
+            //Setting power to wheels
+            leftFront.setPower(drive + strafe + turn);
+            rightFront.setPower(drive - strafe - turn);
+            leftRear.setPower(drive - strafe + turn);
+            rightRear.setPower(drive + strafe - turn);
+        }
 
-        telemetry.addData("Is Driving", true);
+
+        telemetry.addData("Is Manual", !follower.isBusy());
         telemetry.update();
     }
 
@@ -83,10 +88,9 @@ public class Robot {
      *
      * @param position the Pose object you want to go to
      * @author Luca Chien - #27055 Palibotics
-     * @author Gemini
-     * @version 1.0.0 2/21/2026
+     * @author ChatGPT
      */
-    public void DriveToPos(Pose position){
+    public void driveToPos(Pose position) {
         Path pathToTarget = new Path(new BezierLine(follower::getPose, position));
         follower.followPath(pathToTarget);
     }

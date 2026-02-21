@@ -9,7 +9,7 @@ public class DriveRobotCentric extends LinearOpMode {
     public void runOpMode() {
 
         double driveSpeed = RobotConstants.DRIVE_SPEED; // 0-1 scales the speed of driving forward and backward
-        double strafeSpeed = RobotConstants.STRAFE_SPEED; // 0-1 scales the sp eed of strafing left and right
+        double strafeSpeed = RobotConstants.STRAFE_SPEED; // 0-1 scales the speed of strafing left and right
         double turnSpeed = RobotConstants.TURN_SPEED; // 0-1 scales the speed of turning left and right
 
         //Chassis Init

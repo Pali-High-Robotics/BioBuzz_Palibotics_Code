@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes;
+
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,9 +14,9 @@ public class Drive extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-                robot.drive(gamepad1);
-             if(gamepad1.aWasPressed()){
-                robot.DriveToPos(new Pose(20,13, 120));
+            robot.drive(gamepad1);
+            if (gamepad1.aWasPressed()) {
+                robot.driveToPos(new Pose(20, 13, 120));
             }
         }
     }
