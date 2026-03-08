@@ -67,6 +67,7 @@ public class AprilTagWebcam {
             telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedID.id));
             telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedID.center.x, detectedID.center.y));
         }
+        telemetry.update();
     }
 
     public AprilTagDetection getTagByID(int ID){

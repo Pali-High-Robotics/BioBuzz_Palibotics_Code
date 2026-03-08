@@ -22,7 +22,7 @@ public class RobotConstants {
 
     public static final String webcam = "Webcam";
 
-    public static final AprilTagLibrary APRIL_TAG_LIBRARY = AprilTagGameDatabase.getCurrentGameTagLibrary();
+    public static final AprilTagLibrary APRIL_TAG_LIBRARY = AprilTagGameDatabase.getDecodeTagLibrary();
 
 
 }
