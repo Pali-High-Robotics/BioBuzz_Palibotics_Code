@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.lib;
 
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
 
 
 public class RobotConstants {
@@ -18,6 +19,10 @@ public class RobotConstants {
     public static final String rf = "rightfront";
     public static final String lr = "leftrear";
     public static final String rr = "rightrear";
+
+    public static final String webcam = "Webcam";
+
+    public static final AprilTagLibrary APRIL_TAG_LIBRARY = AprilTagGameDatabase.getCurrentGameTagLibrary();
 
 
 }

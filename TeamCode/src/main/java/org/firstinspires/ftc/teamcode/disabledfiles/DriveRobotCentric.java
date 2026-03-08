@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.disabledfiles;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.lib.RobotConstants;
-
+@Disabled
 @TeleOp(name = "DriveRobotCentric")
 public class DriveRobotCentric extends LinearOpMode {
     public void runOpMode() {

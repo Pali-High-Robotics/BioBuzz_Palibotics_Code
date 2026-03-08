@@ -25,6 +25,7 @@ public class Robot {
     /**
      * @param hardwareMap hardware instance from the robot
      * @param telemetry   telemetry instance
+     * @author Luca Chien #27055 Palibotics
      */
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -88,7 +89,7 @@ public class Robot {
      *
      * @param position the Pose object you want to go to
      * @author Luca Chien - #27055 Palibotics
-     * @author ChatGPT
+     * @Co-Author: ChatGPT
      */
     public void driveToPos(Pose position) {
         Path pathToTarget = new Path(new BezierLine(follower::getPose, position));

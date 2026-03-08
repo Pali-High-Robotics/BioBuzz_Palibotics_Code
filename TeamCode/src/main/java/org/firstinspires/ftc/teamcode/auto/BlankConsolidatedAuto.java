@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
  * BlueClose, RedClose, BlueFar, RedFar
  *
  * @author Luca Chien - #27055 Palibotics
- * @autor ChatGPT
+ * @author ChatGPT
  * @version 1.0.1 2/21/2026
  */
 public abstract class BlankConsolidatedAuto extends OpMode {
