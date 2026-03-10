@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.lib.Robot;
+import org.firstinspires.ftc.teamcode.lib.RobotConstants;
 
 @TeleOp(name = "Drive")
 public class Drive extends LinearOpMode {
     public void runOpMode() {
         Robot robot = new Robot(hardwareMap, telemetry);
-        robot.initialize();
+        robot.initialize(new Pose(0, 0, 0));
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.SortOrder;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
@@ -30,7 +31,7 @@ public class ColorBlobWebcam {
     private static final double OBJECT_WIDTH_INCHES = 5;
     // This Focal Length is a placeholder. You should calibrate this for your specific camera resolution.
     // Formula to calibrate: F = (PixelWidthAtDistance * Distance) / RealWidth
-    private static final double FOCAL_LENGTH = 100;
+    private static final double FOCAL_LENGTH = 1000;
 
     /**
      * Initializes the webcam and color locator processor.
@@ -70,13 +71,12 @@ public class ColorBlobWebcam {
         // Filter out tiny noise and massive background blobs
         ColorBlobLocatorProcessor.Util.filterByCriteria(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
-                150, 80000, detectedBlobs);
+                50, 20000, detectedBlobs);
 
         // Sort so the largest (closest/most likely) is at index 0
-        ColorBlobLocatorProcessor.Util.sortByCriteria(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
-                SortOrder.DESCENDING,
-                detectedBlobs);
+        ColorBlobLocatorProcessor.Util.filterByCriteria(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CIRCULARITY,
+                0.6, 1, detectedBlobs);
     }
 
     /**
@@ -88,8 +88,8 @@ public class ColorBlobWebcam {
         if (blob == null) return -1.0;
 
         // Use the box fit to get the pixel width of the blob
-        RotatedRect boxFit = blob.getBoxFit();
-        double pixelWidth = Math.max(boxFit.size.width, boxFit.size.height);
+        Circle circleFit= blob.getCircle();
+        double pixelWidth = circleFit.getRadius();
 
         if (pixelWidth <= 0) return -1.0;
 

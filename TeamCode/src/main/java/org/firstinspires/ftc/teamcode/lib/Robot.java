@@ -38,7 +38,7 @@ public class Robot {
      *
      * @author Luca Chien - #27055 Palibotics
      */
-    public void initialize() {
+    public void initialize(Pose startPose) {
         //Chassis Init
         leftFront = hardwareMap.get(DcMotorEx.class, RobotConstants.lf);
         leftRear = hardwareMap.get(DcMotorEx.class, RobotConstants.lr);
@@ -50,7 +50,7 @@ public class Robot {
         leftRear.setDirection(DcMotorEx.Direction.REVERSE);
 
         follower = Constants.createFollower(hardwareMap);
-
+        follower.setStartingPose(startPose);
     }
 
     /**
@@ -75,6 +75,11 @@ public class Robot {
             rightFront.setPower(drive - strafe - turn);
             leftRear.setPower(drive - strafe + turn);
             rightRear.setPower(drive + strafe - turn);
+        } else if(!follower.isBusy()){
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftRear.setPower(0);
+            rightRear.setPower(0);
         }
 
 
@@ -95,4 +100,5 @@ public class Robot {
         Path pathToTarget = new Path(new BezierLine(follower::getPose, position));
         follower.followPath(pathToTarget);
     }
+
 }
