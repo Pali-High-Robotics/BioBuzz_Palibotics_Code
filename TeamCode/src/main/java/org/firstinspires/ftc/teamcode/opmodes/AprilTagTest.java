@@ -9,13 +9,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 @TeleOp(name = "AprilTagTest")
 public class AprilTagTest extends LinearOpMode {
 
-    public void runOpMode(){
+    public void runOpMode() {
         AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
 
         aprilTagWebcam.init(hardwareMap, telemetry);
         waitForStart();
 
-        while(opModeIsActive() && !isStopRequested()){
+        while (opModeIsActive() && !isStopRequested()) {
             aprilTagWebcam.update();
             AprilTagDetection id20 = aprilTagWebcam.getTagByID(20);
             AprilTagDetection id21 = aprilTagWebcam.getTagByID(21);

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.lib;
 
 import android.util.Size;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.SortOrder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,20 +21,20 @@ import java.util.List;
  * It includes distance estimation for 5-inch diameter spheres.
  */
 public class ColorBlobWebcam {
-    private ColorBlobLocatorProcessor colorLocator;
-    private VisionPortal visionPortal;
-    private List<ColorBlobLocatorProcessor.Blob> detectedBlobs = new ArrayList<>();
-    private Telemetry telemetry;
-
     // Distance Calibration Constants
     // Distance = (RealWidth * FocalLength) / PixelWidth
     private static final double OBJECT_WIDTH_INCHES = 5;
     // This Focal Length is a placeholder. You should calibrate this for your specific camera resolution.
     // Formula to calibrate: F = (PixelWidthAtDistance * Distance) / RealWidth
     private static final double FOCAL_LENGTH = 1000;
+    private ColorBlobLocatorProcessor colorLocator;
+    private VisionPortal visionPortal;
+    private List<ColorBlobLocatorProcessor.Blob> detectedBlobs = new ArrayList<>();
+    private Telemetry telemetry;
 
     /**
      * Initializes the webcam and color locator processor.
+     *
      * @param hardwareMap The robot's hardware map.
      * @param telemetry   Telemetry object for logging.
      * @param colorRange  The color range to detect (e.g., ColorRange.BLUE, ColorRange.YELLOW).
@@ -81,6 +81,7 @@ public class ColorBlobWebcam {
 
     /**
      * Estimates the distance to a detected blob in inches.
+     *
      * @param blob The blob to measure.
      * @return Estimated distance in inches, or -1 if blob is null.
      */
@@ -88,7 +89,7 @@ public class ColorBlobWebcam {
         if (blob == null) return -1.0;
 
         // Use the box fit to get the pixel width of the blob
-        Circle circleFit= blob.getCircle();
+        Circle circleFit = blob.getCircle();
         double pixelWidth = circleFit.getRadius();
 
         if (pixelWidth <= 0) return -1.0;
@@ -116,6 +117,7 @@ public class ColorBlobWebcam {
 
     /**
      * Logs data about a specific blob to telemetry, including distance.
+     *
      * @param blob The blob to report on.
      */
     public void blobTelemetry(ColorBlobLocatorProcessor.Blob blob) {
@@ -133,7 +135,7 @@ public class ColorBlobWebcam {
         telemetry.addData("Est. Distance", "%6.2f inches", distance);
         telemetry.addData("Center X", "%6.1f", boxFit.center.x);
         telemetry.addData("Center Y", "%6.1f", boxFit.center.y);
-        telemetry.addData("Area", "%d px", (int)blob.getContourArea());
+        telemetry.addData("Area", "%d px", blob.getContourArea());
         telemetry.update();
     }
 

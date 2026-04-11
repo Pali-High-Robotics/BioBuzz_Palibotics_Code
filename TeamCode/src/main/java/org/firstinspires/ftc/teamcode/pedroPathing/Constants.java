@@ -4,14 +4,16 @@ import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.FollowerBuilder;
-import com.pedropathing.paths.PathConstraints;
+import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.lib.RobotConstants;
 
 
 public class Constants {
@@ -21,7 +23,7 @@ public class Constants {
             .lateralZeroPowerAcceleration(-68.98666124357598)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.01, 0.02))
             .headingPIDFCoefficients(new PIDFCoefficients(1.2, 0, 0.02, 0.02))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015,0,0.00001,0.6,0.02))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015, 0, 0.00001, 0.6, 0.02))
             .centripetalScaling(0.001);
 
 
@@ -29,10 +31,10 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(0.7)
-            .rightFrontMotorName("rightfront")
-            .rightRearMotorName("rightrear")
-            .leftRearMotorName("leftrear")
-            .leftFrontMotorName("leftfront")
+            .rightFrontMotorName(RobotConstants.rf)
+            .rightRearMotorName(RobotConstants.rr)
+            .leftRearMotorName(RobotConstants.lr)
+            .leftFrontMotorName(RobotConstants.lf)
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)

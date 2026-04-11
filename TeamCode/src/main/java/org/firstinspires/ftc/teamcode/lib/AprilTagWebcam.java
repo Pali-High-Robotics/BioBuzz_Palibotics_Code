@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.lib;
+
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,7 +22,7 @@ public class AprilTagWebcam {
 
     private Telemetry telemetry;
 
-    public boolean init(HardwareMap hardwareMap, Telemetry telemetry){
+    public boolean init(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         aprilTagProcessor = new AprilTagProcessor.Builder()
@@ -37,23 +38,21 @@ public class AprilTagWebcam {
                 .setCameraResolution(new Size(640, 480))
                 .addProcessor(aprilTagProcessor)
                 .build();
-        if(visionPortal != null && aprilTagProcessor != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return visionPortal != null && aprilTagProcessor != null;
     }
 
-    public void update(){
+    public void update() {
         detectedTags = aprilTagProcessor.getDetections();
     }
 
-    public List<AprilTagDetection> getDetectedTags(){
+    public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }
 
-    public void aprilTagTelemetry(AprilTagDetection detectedID){
-        if(detectedID == null) {return;}
+    public void aprilTagTelemetry(AprilTagDetection detectedID) {
+        if (detectedID == null) {
+            return;
+        }
         if (detectedID.metadata != null) {
             telemetry.addLine(String.format("\n==== (ID %d) %s", detectedID.id, detectedID.metadata.name));
             telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (cm)", detectedID.ftcPose.x, detectedID.ftcPose.y, detectedID.ftcPose.z));
@@ -66,17 +65,17 @@ public class AprilTagWebcam {
         telemetry.update();
     }
 
-    public AprilTagDetection getTagByID(int ID){
-        for(AprilTagDetection detection : detectedTags){
-            if (detection.id == ID){
+    public AprilTagDetection getTagByID(int ID) {
+        for (AprilTagDetection detection : detectedTags) {
+            if (detection.id == ID) {
                 return detection;
             }
         }
         return null;
     }
 
-    public void stop(){
-        if (visionPortal != null){
+    public void stop() {
+        if (visionPortal != null) {
             visionPortal.close();
         }
     }
