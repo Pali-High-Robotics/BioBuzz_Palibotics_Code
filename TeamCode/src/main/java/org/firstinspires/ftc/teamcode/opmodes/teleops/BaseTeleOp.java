@@ -4,10 +4,10 @@ package org.firstinspires.ftc.teamcode.opmodes.teleops;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
-import org.firstinspires.ftc.teamcode.lib.Alliance;
+import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 
 
-public abstract class BaseTeleOp extends OpMode {
+public class BaseTeleOp extends OpMode {
     final Alliance alliance;
     //Alliance "Selector"
     public BaseTeleOp(Alliance alliance){

@@ -1,7 +1,13 @@
-package org.firstinspires.ftc.teamcode.lib;
+package org.firstinspires.ftc.teamcode.config.lib;
 
 import com.pedropathing.geometry.Pose;
 
+/**
+ * File to hold all Global Robot Constants/Variables
+ *
+ * @author lucachien
+ * @version 1.0.0 - 4/22/2026
+ */
 public class RobotConstants {
     public static final String
             lf = "leftfront",

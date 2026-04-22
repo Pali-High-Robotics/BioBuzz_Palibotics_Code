@@ -1,14 +1,20 @@
-package org.firstinspires.ftc.teamcode.lib;
+package org.firstinspires.ftc.teamcode.config;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.config.lib.Alliance;
+import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
+import org.firstinspires.ftc.teamcode.config.subsystems.Chassis;
 
 import java.util.List;
-
+/**
+ * This is the Robot object, which gathers all subsystems and
+ * allows the entire robot to be controlled from one file
+ *
+ * @author lucachien
+ * @version 1.0.0 - 4/22/2026
+ */
 public class Robot {
     public Chassis chassis;
     private final List<LynxModule> hubs;
@@ -23,4 +29,6 @@ public class Robot {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
     }
+
+
 }
