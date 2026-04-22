@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
-import com.pedropathing.control.FilteredPIDFCoefficients;
-import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -18,19 +16,12 @@ import org.firstinspires.ftc.teamcode.lib.RobotConstants;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(7.4)
-            .forwardZeroPowerAcceleration(-38.635906734464136)
-            .lateralZeroPowerAcceleration(-68.98666124357598)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.01, 0.02))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.2, 0, 0.02, 0.02))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015, 0, 0.00001, 0.6, 0.02))
-            .centripetalScaling(0.001);
-
+            .mass(5);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(0.7)
+            .maxPower(1)
             .rightFrontMotorName(RobotConstants.rf)
             .rightRearMotorName(RobotConstants.rr)
             .leftRearMotorName(RobotConstants.lr)
@@ -38,15 +29,13 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .yVelocity(34.69790913739542)
-            .xVelocity(44.55223936546506);
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-6.2)
-            .strafePodX(0.3)
-            .distanceUnit(DistanceUnit.INCH)
-            .hardwareMapName("pinpoint")
+            .forwardPodY(0)
+            .strafePodX(0)
+            .distanceUnit(DistanceUnit.MM)
+            .hardwareMapName(RobotConstants.pinpoint)
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
