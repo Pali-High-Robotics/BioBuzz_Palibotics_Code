@@ -24,7 +24,7 @@ public class Robot {
 
         hubs = hardwareMap.getAll(LynxModule.class);
 
-        //Speeds up data readings, be careful, you may get stale data
+        //Speeds up data readings, be careful, you may get stale data in specific circumstances.
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }

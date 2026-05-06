@@ -19,11 +19,8 @@ public class RobotConstants {
             DRIVE_SPEED = 1,
             STRAFE_SPEED = 1,
             TURN_SPEED = 1;
-
     public static final Pose defaultPose = new Pose(144, 144, 0);
 
-
-    private RobotConstants() {
-    }
+    private RobotConstants() {}
 
 }
