@@ -14,11 +14,13 @@ public class RobotConstants {
             rf = "rightfront",
             lr = "leftrear",
             rr = "rightrear",
-            pinpoint = "pinpoint";
+            pinpoint = "pinpoint",
+            intake = "intakeMotor";
     public static final int
             DRIVE_SPEED = 1,
             STRAFE_SPEED = 1,
-            TURN_SPEED = 1;
+            TURN_SPEED = 1,
+            INTAKE_SPEED = 1;
     public static final Pose defaultPose = new Pose(144, 144, 0);
 
     private RobotConstants() {}

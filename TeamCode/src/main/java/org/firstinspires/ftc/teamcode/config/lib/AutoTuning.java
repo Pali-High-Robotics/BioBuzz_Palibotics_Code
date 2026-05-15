@@ -2,15 +2,18 @@ package org.firstinspires.ftc.teamcode.config.lib;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
-@TeleOp(name = "Final GoBilda PID Auto-Tuner", group = "Tuning")
+import com.qualcomm.robotcore.util.ElapsedTime;
+/**
+ * Please note. This is AI generated. It is not the work of anyone.
+ * This is purely just to refine our motors.
+ */
+@TeleOp(name = "Full PIDF Auto-Tuner", group = "Tuning")
 public class AutoTuning extends LinearOpMode {
 
     // --- 1. CONFIGURATION ---
-    // Set these three values before running
-    private final GoBilda SELECTED_MOTOR = GoBilda.RPM_NONE;
+    private final GoBilda SELECTED_MOTOR = GoBilda.RPM_435; // Default for testing
     private final double TARGET_VELOCITY_RPM = 200.0;
     private final String MOTOR_ID = "testMotor";
 
@@ -30,92 +33,150 @@ public class AutoTuning extends LinearOpMode {
         GoBilda(double rpm, double tpr) { this.maxRPM = rpm; this.tpr = tpr; }
     }
 
-    // Tuning State Variables
-    private DcMotorEx motor;
-    private double currentP = 0.0;
-    private double calculatedF = 0.0;
-    private double targetTPS = 0.0;
-    private boolean isTuningComplete = false;
+    enum State {
+        INITIALIZING,
+        TUNE_F,
+        TUNE_P,
+        TUNE_D,
+        TUNE_I,
+        VERIFY,
+        DONE
+    }
 
-    // Stability Logic
-    private long stableStartTime = 0;
-    private final long STABILITY_REQUIRED_MS = 1200; // Must stay in range for 1.2 seconds
-    private final double ERROR_MARGIN = 0.02;       // 2% allowable error
+    private State currentState = State.INITIALIZING;
+    private DcMotorEx motor;
+    
+    private double currentP = 0, currentI = 0, currentD = 0, currentF = 0;
+    private double targetTPS;
+    
+    private final ElapsedTime stateTimer = new ElapsedTime();
+    private final ElapsedTime settleTimer = new ElapsedTime();
+    
+    // Oscillation Detection
+    private double lastError = 0;
+    private int crossingCount = 0;
+    private final int REQUIRED_CROSSINGS = 10;
+    private double criticalP = 0;
 
     @Override
     public void runOpMode() {
-        // Hardware Setup
         motor = hardwareMap.get(DcMotorEx.class, MOTOR_ID);
-        motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Clamping and Math
-        double clampedRPM = Math.max(0, Math.min(TARGET_VELOCITY_RPM, SELECTED_MOTOR.maxRPM));
-        targetTPS = (clampedRPM * SELECTED_MOTOR.tpr) / 60.0;
-        double maxTPS = (SELECTED_MOTOR.maxRPM * SELECTED_MOTOR.tpr) / 60.0;
+        targetTPS = (TARGET_VELOCITY_RPM * SELECTED_MOTOR.tpr) / 60.0;
+        double theoreticalMaxTPS = (SELECTED_MOTOR.maxRPM * SELECTED_MOTOR.tpr) / 60.0;
 
-        // Base Feedforward (Standard FTC SDK formula)
-        calculatedF = 32767.0 / maxTPS;
-
-        telemetry.addLine(">> TUNER READY <<");
-        telemetry.addData("Motor", SELECTED_MOTOR.name());
-        telemetry.addData("Target RPM", clampedRPM);
+        telemetry.addLine(">> READY TO TUNE <<");
         telemetry.update();
 
         waitForStart();
+        stateTimer.reset();
+        currentState = State.TUNE_F;
 
         while (opModeIsActive()) {
             double actualVelo = motor.getVelocity();
-            double error = Math.abs(targetTPS - actualVelo);
-            double allowedError = targetTPS * ERROR_MARGIN;
+            double error = targetTPS - actualVelo;
 
-            if (!isTuningComplete) {
-                // Apply current PIDF
-                // We use 10% of P for 'I' to handle steady-state friction
-                motor.setVelocityPIDFCoefficients(currentP, currentP * 0.1, 0, calculatedF);
-                motor.setVelocity(targetTPS);
-
-                // Check for stability
-                if (error <= allowedError) {
-                    if (stableStartTime == 0) stableStartTime = System.currentTimeMillis();
-
-                    if (System.currentTimeMillis() - stableStartTime > STABILITY_REQUIRED_MS) {
-                        isTuningComplete = true; // LOCK IN VALUES
+            switch (currentState) {
+                case TUNE_F:
+                    // Step 1: Tune F (Feedforward)
+                    // We want F to handle the steady-state velocity by itself mostly
+                    motor.setPower(targetTPS / theoreticalMaxTPS); // Open loop power
+                    if (stateTimer.seconds() > 2.0) {
+                        currentF = (motor.getPower() * 32767.0) / actualVelo;
+                        currentState = State.TUNE_P;
+                        stateTimer.reset();
+                        motor.setVelocityPIDFCoefficients(0, 0, 0, currentF);
                     }
-                } else {
-                    // Not stable yet. Reset timer.
-                    stableStartTime = 0;
+                    break;
 
-                    // Increment P slowly to find the minimum effective power
-                    if (actualVelo < targetTPS) {
-                        currentP += 0.005; // Small steps for high accuracy
+                case TUNE_P:
+                    // Step 2: Tune P (Proportional)
+                    // Increase P until oscillation is detected
+                    motor.setVelocity(targetTPS);
+                    
+                    if (Math.signum(error) != Math.signum(lastError) && Math.abs(error) > (targetTPS * 0.02)) {
+                        crossingCount++;
                     }
-                }
-            } else {
-                // LOCKOUT: Motor stops, values remain on screen
-                motor.setVelocity(0);
+                    lastError = error;
+
+                    if (crossingCount >= REQUIRED_CROSSINGS) {
+                        criticalP = currentP;
+                        currentP = criticalP * 0.6; // Ziegler-Nicholsish back-off
+                        currentState = State.TUNE_D;
+                        stateTimer.reset();
+                        crossingCount = 0;
+                    } else {
+                        if (stateTimer.milliseconds() > 100) {
+                            currentP += 0.01; // Slow ramp
+                            stateTimer.reset();
+                        }
+                    }
+                    motor.setVelocityPIDFCoefficients(currentP, currentI, currentD, currentF);
+                    break;
+
+                case TUNE_D:
+                    // Step 3: Tune D (Derivative)
+                    // Increase D to dampen the remaining overshoot
+                    // For velocity tuning, D is often small or zero, but we'll try to find a minimal amount
+                    if (stateTimer.seconds() < 1.0) {
+                        motor.setVelocity(0); // Stop
+                    } else if (stateTimer.seconds() < 3.0) {
+                        motor.setVelocity(targetTPS); // Step response
+                        if (error < -targetTPS * 0.05) { // Significant overshoot
+                            currentD += 0.001;
+                        }
+                    } else {
+                        currentState = State.TUNE_I;
+                        stateTimer.reset();
+                    }
+                    motor.setVelocityPIDFCoefficients(currentP, currentI, currentD, currentF);
+                    break;
+
+                case TUNE_I:
+                    // Step 4: Tune I (Integral)
+                    // Close the steady-state gap
+                    motor.setVelocity(targetTPS);
+                    if (stateTimer.seconds() > 2.0) {
+                        if (Math.abs(error) > (targetTPS * 0.01)) {
+                            currentI += 0.0001;
+                        } else {
+                            currentState = State.VERIFY;
+                            stateTimer.reset();
+                        }
+                    }
+                    motor.setVelocityPIDFCoefficients(currentP, currentI, currentD, currentF);
+                    break;
+
+                case VERIFY:
+                    // Verify stability
+                    motor.setVelocity(targetTPS);
+                    if (Math.abs(error) < (targetTPS * 0.02)) {
+                        if (settleTimer.seconds() > 2.0) {
+                            currentState = State.DONE;
+                        }
+                    } else {
+                        settleTimer.reset();
+                    }
+                    break;
+
+                case DONE:
+                    motor.setVelocity(0);
+                    break;
             }
 
-            // --- TELEMETRY OUTPUT ---
-            telemetry.addLine("=== PID AUTO-TUNER ===");
-            telemetry.addData("STATUS", isTuningComplete ? "COMPLETED - SAVED" : "TUNING...");
-
-            if (!isTuningComplete && stableStartTime != 0) {
-                long progress = System.currentTimeMillis() - stableStartTime;
-                telemetry.addData("Settling", "%d / %d ms", progress, STABILITY_REQUIRED_MS);
-            }
-
-            telemetry.addLine("\n--- RESULTS (Copy These) ---");
+            // Telemetry
+            telemetry.addData("STATE", currentState);
+            telemetry.addData("Target TPS", targetTPS);
+            telemetry.addData("Actual TPS", actualVelo);
+            telemetry.addData("Error", error);
+            telemetry.addLine("\n--- RESULTS ---");
             telemetry.addData("P", "%.5f", currentP);
-            telemetry.addData("I", "%.5f", currentP * 0.1);
-            telemetry.addData("D", "0.00000");
-            telemetry.addData("F", "%.5f", calculatedF);
-
-            telemetry.addLine("\n--- LIVE DATA ---");
-            telemetry.addData("Target TPS", "%.1f", targetTPS);
-            telemetry.addData("Actual TPS", "%.1f", actualVelo);
-            telemetry.addData("Error", "%.1f", error);
-
+            telemetry.addData("I", "%.5f", currentI);
+            telemetry.addData("D", "%.5f", currentD);
+            telemetry.addData("F", "%.5f", currentF);
             telemetry.update();
         }
     }
