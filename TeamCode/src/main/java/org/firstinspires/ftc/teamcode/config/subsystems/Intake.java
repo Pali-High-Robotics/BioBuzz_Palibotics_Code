@@ -24,7 +24,6 @@ public class Intake{
     }
 
     public void update(){}
-
     public void runIntake(Direction direction){
         if(direction == Direction.FORWARDS){
             runIntake(RobotConstants.INTAKE_SPEED);

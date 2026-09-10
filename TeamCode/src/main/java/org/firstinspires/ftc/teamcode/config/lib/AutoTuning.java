@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Please note. This is AI generated. It is not the work of anyone.
  * This is purely just to refine our motors.
+ * HAS NOT BEEN TESTED
  */
 @TeleOp(name = "Full PIDF Auto-Tuner", group = "Tuning")
 public class AutoTuning extends LinearOpMode {

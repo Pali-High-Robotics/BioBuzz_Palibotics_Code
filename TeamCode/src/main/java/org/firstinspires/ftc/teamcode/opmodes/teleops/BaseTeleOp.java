@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleops;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.CommandOpMode;
@@ -23,15 +25,12 @@ public class BaseTeleOp extends CommandOpMode {
 
     @Override
     public void start() {
-        // Schedule the default drive command
-        schedule(robot.chassis.driveCommand(gamepad1));
+        robot.chassis.drive(gamepad1);
     }
 
     @Override
     public void loop() {
-        // Must call super.loop() to run the IVY scheduler
         super.loop();
-
         // Update robot subsystems (e.g., Pedro Pathing follower)
         robot.update();
     }

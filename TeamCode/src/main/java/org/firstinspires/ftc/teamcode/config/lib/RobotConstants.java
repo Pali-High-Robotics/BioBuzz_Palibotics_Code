@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.config.lib;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 
 /**
  * File to hold all Global Robot Constants/Variables
