@@ -17,12 +17,12 @@ import java.util.List;
  */
 public class Robot {
     public Chassis chassis;
-    public Intake intake;
+    //public Intake intake;
     private final List<LynxModule> hubs;
 
     public Robot(HardwareMap hardwareMap, Alliance alliance) {
         chassis = new Chassis(hardwareMap, alliance, RobotConstants.defaultPose);
-        intake = new Intake(hardwareMap, alliance);
+        //intake = new Intake(hardwareMap, alliance);
         hubs = hardwareMap.getAll(LynxModule.class);
 
         //Speeds up data readings, be careful, you may get stale data in specific circumstances.
@@ -37,6 +37,6 @@ public class Robot {
      */
     public void update() {
         chassis.update();
-        intake.update();
+        //intake.update();
     }
 }
