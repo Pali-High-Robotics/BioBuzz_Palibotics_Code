@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.config.subsystems;
 
+import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,46 +10,64 @@ import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 import org.firstinspires.ftc.teamcode.config.lib.Direction;
 import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 
+import static com.pedropathing.ivy.commands.Commands.*;
+
 /**
- * This is the Intake Object, which controls the robot's intake
+ * This is the Intake Object, which controls the robot's intake mechanism.
  *
- * @version 1.0 - 5/14/2026
+ * @version 2.0 - 2026 Oct 20, 2026
  */
-public class Intake{
+public class Intake {
     private DcMotorEx intakeMotor;
     private final Alliance alliance;
 
-    public Intake(HardwareMap hardwareMap, Alliance alliance){
+    public Intake(HardwareMap hardwareMap, Alliance alliance) {
         intakeMotor = hardwareMap.get(DcMotorEx.class, RobotConstants.intake);
         this.alliance = alliance;
     }
 
-    public void update(){}
-    public void runIntake(Direction direction){
-        if(direction == Direction.FORWARDS){
+    public void update() {}
+
+    public void runIntake(Direction direction) {
+        if (direction == Direction.FORWARDS) {
             runIntake(RobotConstants.INTAKE_SPEED);
-        } else if(direction == Direction.BACKWARDS) {
+        } else if (direction == Direction.BACKWARDS) {
             runIntake(-RobotConstants.INTAKE_SPEED);
         } else {
             runIntake(0);
         }
     }
 
-    public void runIntake(double speed){
+    public void runIntake(double speed) {
         intakeMotor.setPower(speed);
     }
 
-    public Alliance getAlliance(){ return alliance; }
-    public double getMotorVel(){ return intakeMotor.getVelocity();}
-    public double getMotorPos(){ return intakeMotor.getCurrentPosition();}
+    public Alliance getAlliance() {
+        return alliance;
+    }
 
-    public CommandBuilder runIntakeCommand(Direction direction){
+    public double getMotorVel() {
+        return intakeMotor.getVelocity();
+    }
+
+    public double getMotorPos() {
+        return intakeMotor.getCurrentPosition();
+    }
+
+    public CommandBuilder runIntakeCommand(Direction direction) {
         return Commands.infinite(() -> runIntake(direction))
                 .requiring(this);
     }
-    public CommandBuilder runIntakeCommand(double speed){
+
+    public CommandBuilder runIntakeCommand(double speed) {
         return Commands.infinite(() -> runIntake(speed))
                 .requiring(this);
     }
 
+    /**
+     * Returns an instant IVY command to stop the intake motor.
+     */
+    public Command stopIntakeCommand() {
+        return instant(() -> runIntake(0)).requiring(this);
+    }
 }

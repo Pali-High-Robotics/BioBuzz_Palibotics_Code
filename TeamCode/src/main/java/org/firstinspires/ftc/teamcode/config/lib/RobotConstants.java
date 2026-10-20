@@ -15,12 +15,22 @@ public class RobotConstants {
             lr = "leftrear",
             rr = "rightrear",
             pinpoint = "pinpoint",
-            intake = "intakeMotor";
+            intake = "intakeMotor",
+            leftShooterMotor = "left_flywheel",
+            rightShooterMotor = "right_flywheel",
+            flipperServo = "flipper";
+
     public static final int
             DRIVE_SPEED = 1,
             STRAFE_SPEED = 1,
             TURN_SPEED = 1,
-            INTAKE_SPEED = 1;
+            INTAKE_SPEED = 1,
+            SHOOTER_SPEED = 1,
+            SHOOTER_TARGET_VELOCITY = 2600;
+
+    public static final double
+            flipperUpPos = 0.9,
+            flipperDownPos = 0.7;
     public static final Pose defaultPose = new Pose(144, 144, 0);
 
     private RobotConstants() {}
