@@ -9,11 +9,8 @@ import org.firstinspires.ftc.teamcode.config.subsystems.*;
 
 import java.util.List;
 /**
- * This is the Robot object, which gathers all subsystems and
- * allows the entire robot to be controlled from one file
- *
- * @author lucachien
- * @version 1.2 - 5/14/2026
+ * Main robot container combining all subsystems (chassis, intake, shooter)
+ * and centralizing hardware configuration and bulk reads.
  */
 public class Robot {
     public Chassis chassis;

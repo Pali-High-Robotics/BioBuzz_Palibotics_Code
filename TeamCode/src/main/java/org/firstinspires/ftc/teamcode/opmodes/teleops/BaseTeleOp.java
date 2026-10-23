@@ -6,7 +6,19 @@ import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 import org.firstinspires.ftc.teamcode.opmodes.CommandOpMode;
 
 /**
- * Base TeleOp class using IVY Command module and updated control schema.
+ * Base TeleOp OpMode using the IVY command framework.
+ *
+ * <h3>Gamepad 1 Controls:</h3>
+ * <ul>
+ *   <li><b>Left Stick Y:</b> Drive forward / backward (robot-centric)</li>
+ *   <li><b>Left Stick X:</b> Strafe left / right</li>
+ *   <li><b>Right Stick X:</b> Turn left / right</li>
+ *   <li><b>Left Trigger:</b> Variable intake speed</li>
+ *   <li><b>Right Trigger:</b> Manual shooter speed</li>
+ *   <li><b>Y Button:</b> Multi-shot launch sequence (4 shots)</li>
+ *   <li><b>B Button:</b> Single-shot launch sequence (1 shot)</li>
+ *   <li><b>X Button:</b> Toggle flipper servo position (up/down)</li>
+ * </ul>
  */
 public class BaseTeleOp extends CommandOpMode {
     protected final Alliance alliance;

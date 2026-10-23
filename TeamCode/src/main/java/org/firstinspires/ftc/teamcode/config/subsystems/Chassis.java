@@ -18,10 +18,8 @@ import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 /**
- * This is the Chassis Object, which controls the robot chassis using the Pedro Pathing library.
- * It handles both teleoperated driving and automated movement to specific points.
- *
- * @version 2.0 - Oct 20, 2026
+ * Subsystem controlling the robot chassis via the PedroPathing follower.
+ * Supports teleoperated driving (robot-centric or field-centric) and autonomous movement.
  */
 public class Chassis {
     private final Follower follower;
@@ -34,10 +32,17 @@ public class Chassis {
         this.alliance = alliance;
     }
 
+    /**
+     * Updates follower localization and path calculations. Call once per loop.
+     */
     public void update() {
         follower.update();
     }
 
+    /**
+     * Manual drive using gamepad sticks (Left Y: drive, Left X: strafe, Right X: turn).
+     * Respects the current field-centric setting.
+     */
     public void drive(Gamepad gamepad) {
         double drive = -gamepad.left_stick_y * RobotConstants.DRIVE_SPEED;
         double strafe = -gamepad.left_stick_x * RobotConstants.STRAFE_SPEED;
@@ -59,6 +64,9 @@ public class Chassis {
      * =====================
      */
 
+    /**
+     * Returns the current estimated robot pose (x, y, heading) from the follower.
+     */
     public Pose getPose() {
         return follower.pose(); // Fixed from closestPose() to follower.pose() for global localization
     }
@@ -89,26 +97,47 @@ public class Chassis {
      * ====================
      */
 
+    /**
+     * Default teleop driving command running continuously from gamepad inputs.
+     */
     public CommandBuilder driveCommand(Gamepad gamepad) {
         return Commands.infinite(() -> drive(gamepad))
                 .requiring(this);
     }
 
+    /**
+     * Command to hold the robot at a specific target field pose.
+     *
+     * @param pose Target field pose to hold.
+     */
     public Command holdPosCommand(Pose pose){
         return hold(follower, pose)
                 .requiring(this);
     }
 
+    /**
+     * Command to hold the robot at its current position.
+     */
     public Command holdPosCommand(){
         return hold(follower)
                 .requiring(this);
     }
 
+    /**
+     * Command to turn and hold at a target heading angle at the current (x, y) position.
+     *
+     * @param degrees Target heading angle passed to the target {@link Pose}.
+     */
     public Command turnToCommand(double degrees) {
         return hold(follower, new Pose(getPose().x(), getPose().y(), degrees))
                 .requiring(this);
     }
 
+    /**
+     * Command to follow a specified compound path using PedroPathing.
+     *
+     * @param path The path sequence to execute.
+     */
     public Command followPathCommand(CompoundPath path){
         return follow(follower, path)
                 .requiring(this);

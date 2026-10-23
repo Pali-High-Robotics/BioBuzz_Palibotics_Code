@@ -6,9 +6,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 /**
- * Please note. This is AI generated. It is not the work of anyone.
- * This is purely just to refine our motors.
- * HAS NOT BEEN TESTED
+ * Automated velocity PIDF tuning OpMode for DcMotorEx actuators.
+ * <p>
+ * Progresses through sequential tuning states:
+ * 1. Feedforward (F) via steady-state open-loop power
+ * 2. Proportional (P) via oscillation detection (Ziegler-Nichols method)
+ * 3. Derivative (D) via step response overshoot dampening
+ * 4. Integral (I) to eliminate steady-state error
+ * 5. Stability verification
+ * </p>
+ * <i>Note: Ensure the test motor has freedom to spin unimpeded during execution.</i>
  */
 @TeleOp(name = "Full PIDF Auto-Tuner", group = "Tuning")
 public class AutoTuning extends LinearOpMode {

@@ -19,10 +19,7 @@ import org.firstinspires.ftc.teamcode.config.lib.Direction;
 import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 
 /**
- * The Intake/Shooter subsystem object, responsible for controlling the robot's
- * dual shooter motors and the flipper feeding mechanism using the PedroPathing IVY framework.
- *
- * @version 2.0 - Oct 20, 2026
+ * Subsystem controlling the dual flywheel shooter motors and feeding flipper servo.
  */
 public class Shooter {
     private final Alliance alliance;
@@ -31,12 +28,6 @@ public class Shooter {
     private final Servo flipperServo;
     private boolean flipperIsUp;
 
-    /**
-     * Constructs a new Shooter subsystem instance
-     *
-     * @param hardwareMap The OpMode's HardwareMap used to retrieve hardware devices.
-     * @param alliance    The current match alliance (RED or BLUE) for side-dependent behavior.
-     */
     public Shooter(HardwareMap hardwareMap, Alliance alliance) {
         leftShooterMotor = hardwareMap.get(DcMotorEx.class, RobotConstants.leftShooterMotor);
         rightShooterMotor = hardwareMap.get(DcMotorEx.class, RobotConstants.rightShooterMotor);
@@ -44,16 +35,11 @@ public class Shooter {
         this.alliance = alliance;
     }
 
-    /**
-     * Update method to be called continuously during the OpMode loop.
-     */
     public void update() {
     }
 
     /**
-     * Runs the shooter motors in a specified preset direction.
-     *
-     * @param direction The target direction enum (FORWARDS, BACKWARDS, or STOP).
+     * Runs the shooter motors at the preset target velocity in the specified direction.
      */
     public void runShooter(Direction direction) {
         if (direction == Direction.FORWARDS) {
@@ -66,32 +52,29 @@ public class Shooter {
     }
 
     /**
-     * Runs the shooter motors at a specific raw power level.
-     * Accounts for opposing motor orientations by inverting the right motor power.
+     * Sets shooter flywheel velocity in ticks per second (TPS).
+     * Automatically inverts the right motor for opposing flywheel rotation.
      *
-     * @param velocity The TPS target to apply to the shooter motors.
+     * @param velocity Target velocity in TPS.
      */
     public void runShooter(double velocity) {
         leftShooterMotor.setVelocity(velocity);
         rightShooterMotor.setVelocity(-velocity);
     }
 
-    /**
-     * Moves the flipper servo to its designated upper/scoring position.
-     */
     public void flipUp() {
         flipperServo.setPosition(RobotConstants.flipperUpPos);
         flipperIsUp = true;
     }
 
-    /**
-     * Moves the flipper servo to its designated lower/intake position.
-     */
     public void flipDown() {
         flipperServo.setPosition(RobotConstants.flipperDownPos);
         flipperIsUp = false;
     }
 
+    /**
+     * Toggles the flipper servo between up and down positions.
+     */
     public void flip() {
         if (flipperIsUp) {
             flipDown();
@@ -100,36 +83,30 @@ public class Shooter {
         }
     }
 
-    /**
-     * Retrieves the alliance configuration assigned to this subsystem.
-     *
-     * @return The active {@link Alliance} configuration.
-     */
     public Alliance getAlliance() {
         return alliance;
     }
 
     /**
-     * Calculates and returns the velocity difference between the left and right shooter motors.
-     *
-     * @return The velocity difference
+     * Returns the velocity difference (TPS) between left and right flywheels.
      */
     public double getMotorVelDiff() {
         return leftShooterMotor.getVelocity() - rightShooterMotor.getVelocity();
     }
 
     /**
-     * Checks whether the current shooter motor velocity has reached the target speed
-     * within an acceptable tolerance window of +/- 5%.
+     * Checks whether the flywheel velocity is within a +/- 5% tolerance window of target speed.
      *
-     * @param targetVelocity The desired target velocity to check against.
-     * @return True if the absolute left motor velocity is within 95% and 105% of the target velocity; false otherwise.
+     * @param targetVelocity Target velocity in TPS.
      */
     public boolean isAtTargetSpeed(double targetVelocity) {
         double currentVel = Math.abs(leftShooterMotor.getVelocity());
         return currentVel >= targetVelocity * 0.95 && currentVel <= targetVelocity * 1.05;
     }
 
+    /**
+     * Command continuously throttling shooter velocity proportionally to Gamepad right trigger.
+     */
     public CommandBuilder runShooterManualCommand(Gamepad gamepad){
         return Commands.infinite(() ->
                 runShooter(gamepad.right_trigger * RobotConstants.SHOOTER_TARGET_VELOCITY))
@@ -139,15 +116,10 @@ public class Shooter {
                 .setConflictBehavior(ConflictBehavior.OVERRIDE);
     }
 
-
-
     /**
-     * Reusable Method returning a sequential IVY Command for the full multi-shot launch sequence.
-     * Automatically handles motor ramp-up, recovery pauses, flipper actuation for a series of shots,
-     * and powers down the shooter motor and resets the flipper upon completion.
+     * Returns a sequential command for a 4-shot automated launch sequence with velocity recovery checks.
      *
-     * @param targetVelocity The velocity threshold required to confirm recovery between shots.
-     * @return A sequential IVY {@link Command} executing the complete launch sequence.
+     * @param targetVelocity Target flywheel velocity in TPS.
      */
     public Command runLaunchSequence(double targetVelocity) {
         return sequential(
@@ -182,6 +154,11 @@ public class Shooter {
                 .setPriority(0);
     }
 
+    /**
+     * Returns a sequential command for a single-shot (SS) automated launch sequence.
+     *
+     * @param targetVelocity Target flywheel velocity in TPS.
+     */
     public Command runLaunchSequenceSS(double targetVelocity) {
         return sequential(
                 //Setup
@@ -200,6 +177,9 @@ public class Shooter {
                 .setPriority(0);
     }
 
+    /**
+     * Command that toggles the flipper servo position.
+     */
     public Command flipCommand(){
         return instant(this::flip)
                 .requiring(this)

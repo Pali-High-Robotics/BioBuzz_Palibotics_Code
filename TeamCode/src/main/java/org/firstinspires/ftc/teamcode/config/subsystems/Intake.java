@@ -14,9 +14,7 @@ import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 import static com.pedropathing.ivy.commands.Commands.*;
 
 /**
- * This is the Intake Object, which controls the robot's intake mechanism.
- *
- * @version 2.0 - 2026 Oct 20, 2026
+ * Subsystem controlling the robot's intake motor.
  */
 public class Intake {
     private DcMotorEx intakeMotor;
@@ -29,6 +27,9 @@ public class Intake {
 
     public void update() {}
 
+    /**
+     * Runs the intake motor at preset speed in the specified direction.
+     */
     public void runIntake(Direction direction) {
         if (direction == Direction.FORWARDS) {
             runIntake(RobotConstants.INTAKE_SPEED);
@@ -39,6 +40,10 @@ public class Intake {
         }
     }
 
+    /**
+     * Sets the intake motor power.
+     * @param speed Motor power in range [-1.0, 1.0].
+     */
     public void runIntake(double speed) {
         intakeMotor.setPower(speed);
     }
@@ -55,11 +60,17 @@ public class Intake {
         return intakeMotor.getCurrentPosition();
     }
 
+    /**
+     * Command continuously running the intake proportionally to Gamepad 1 left trigger.
+     */
     public CommandBuilder runIntakeCommand(Gamepad gamepad){
         return Commands.infinite(() -> runIntake(gamepad.left_trigger * RobotConstants.INTAKE_SPEED))
                 .requiring(this);
     }
 
+    /**
+     * Command that instantly stops the intake motor.
+     */
     public Command stopIntakeCommand() {
         return instant(() -> runIntake(0)).requiring(this);
     }
