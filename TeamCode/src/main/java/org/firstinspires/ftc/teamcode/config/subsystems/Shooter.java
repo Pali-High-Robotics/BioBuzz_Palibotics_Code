@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.config.subsystems;
 
+import static com.pedropathing.ivy.commands.Commands.infinite;
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitUntil;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
+import com.pedropathing.ivy.behaviors.ConflictBehavior;
 import com.pedropathing.ivy.commands.Commands;
-import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -13,9 +18,6 @@ import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 import org.firstinspires.ftc.teamcode.config.lib.Direction;
 import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 
-import static com.pedropathing.ivy.commands.Commands.*;
-import static com.pedropathing.ivy.groups.Groups.*;
-
 /**
  * The Intake/Shooter subsystem object, responsible for controlling the robot's
  * dual shooter motors and the flipper feeding mechanism using the PedroPathing IVY framework.
@@ -23,12 +25,11 @@ import static com.pedropathing.ivy.groups.Groups.*;
  * @version 2.0 - Oct 20, 2026
  */
 public class Shooter {
-    private DcMotorEx leftShooterMotor;
-    private DcMotorEx rightShooterMotor;
-
-    private Timer shooterTimer;
-    private Servo flipperServo;
     private final Alliance alliance;
+    private final DcMotorEx leftShooterMotor;
+    private final DcMotorEx rightShooterMotor;
+    private final Servo flipperServo;
+    private boolean flipperIsUp;
 
     /**
      * Constructs a new Shooter subsystem instance
@@ -41,13 +42,13 @@ public class Shooter {
         rightShooterMotor = hardwareMap.get(DcMotorEx.class, RobotConstants.rightShooterMotor);
         flipperServo = hardwareMap.get(Servo.class, RobotConstants.flipperServo);
         this.alliance = alliance;
-        this.shooterTimer = new Timer();
     }
 
     /**
      * Update method to be called continuously during the OpMode loop.
      */
-    public void update() {}
+    public void update() {
+    }
 
     /**
      * Runs the shooter motors in a specified preset direction.
@@ -56,9 +57,9 @@ public class Shooter {
      */
     public void runShooter(Direction direction) {
         if (direction == Direction.FORWARDS) {
-            runShooter(RobotConstants.SHOOTER_SPEED);
+            runShooter(RobotConstants.SHOOTER_TARGET_VELOCITY);
         } else if (direction == Direction.BACKWARDS) {
-            runShooter(-RobotConstants.SHOOTER_SPEED);
+            runShooter(-RobotConstants.SHOOTER_TARGET_VELOCITY);
         } else {
             runShooter(0);
         }
@@ -68,11 +69,11 @@ public class Shooter {
      * Runs the shooter motors at a specific raw power level.
      * Accounts for opposing motor orientations by inverting the right motor power.
      *
-     * @param speed The power level to apply to the shooter motors, ranging from -1.0 to 1.0.
+     * @param velocity The TPS target to apply to the shooter motors.
      */
-    public void runShooter(double speed) {
-        leftShooterMotor.setPower(speed);
-        rightShooterMotor.setPower(-speed);
+    public void runShooter(double velocity) {
+        leftShooterMotor.setVelocity(velocity);
+        rightShooterMotor.setVelocity(-velocity);
     }
 
     /**
@@ -80,6 +81,7 @@ public class Shooter {
      */
     public void flipUp() {
         flipperServo.setPosition(RobotConstants.flipperUpPos);
+        flipperIsUp = true;
     }
 
     /**
@@ -87,21 +89,14 @@ public class Shooter {
      */
     public void flipDown() {
         flipperServo.setPosition(RobotConstants.flipperDownPos);
+        flipperIsUp = false;
     }
 
-    /**
-     * Toggles the flipper servo position between up and down when the gamepad's
-     * 'A' button is newly pressed.
-     *
-     * @param gamepad The Gamepad instance used to poll driver inputs.
-     */
-    public void flip(Gamepad gamepad) {
-        if (gamepad.aWasPressed()) {
-            if (flipperServo.getPosition() >= RobotConstants.flipperUpPos) {
-                flipDown();
-            } else {
-                flipUp();
-            }
+    public void flip() {
+        if (flipperIsUp) {
+            flipDown();
+        } else {
+            flipUp();
         }
     }
 
@@ -135,85 +130,81 @@ public class Shooter {
         return currentVel >= targetVelocity * 0.95 && currentVel <= targetVelocity * 1.05;
     }
 
-    /**
-     * Creates and returns a CommandBuilder that runs the shooter infinitely in a specified direction,
-     * requiring this subsystem.
-     *
-     * @param direction The direction to run the shooter.
-     * @return A configured {@link CommandBuilder} instance.
-     */
-    public CommandBuilder runLaunchCommand(Direction direction) {
-        return Commands.infinite(() -> runShooter(direction))
-                .requiring(this);
+    public CommandBuilder runShooterManualCommand(Gamepad gamepad){
+        return Commands.infinite(() ->
+                runShooter(gamepad.right_trigger * RobotConstants.SHOOTER_TARGET_VELOCITY))
+                .until(() -> gamepad.right_trigger <= 0.05)
+                .requiring(this)
+                .setPriority(1)
+                .setConflictBehavior(ConflictBehavior.OVERRIDE);
     }
 
-    /**
-     * Creates and returns a CommandBuilder that runs the shooter infinitely at a specified speed,
-     * requiring this subsystem.
-     *
-     * @param speed The raw power level to run the shooter.
-     * @return A configured {@link CommandBuilder} instance.
-     */
-    public CommandBuilder runLaunchCommand(double speed) {
-        return Commands.infinite(() -> runShooter(speed))
-                .requiring(this);
-    }
 
-    /**
-     * Automated Launch Sequence Command Builder utilizing IVY Compositions.
-     *
-     * @param speed          The motor power level for launching game pieces.
-     * @param targetVelocity The target velocity threshold required before feeding each piece.
-     * @return A configured {@link CommandBuilder} for the automated launch sequence.
-     */
-    public CommandBuilder runAutomatedLaunchSequence(double speed, double targetVelocity) {
-        return Command.build()
-                .setStart(() -> runShooter(speed))
-                .setExecute(() -> {
-                    // Handled by inner sequential composition or command builder execution flow
-                })
-                .requiring(this);
-    }
 
     /**
      * Reusable Method returning a sequential IVY Command for the full multi-shot launch sequence.
      * Automatically handles motor ramp-up, recovery pauses, flipper actuation for a series of shots,
      * and powers down the shooter motor and resets the flipper upon completion.
      *
-     * @param speed          The motor speed used during launch.
      * @param targetVelocity The velocity threshold required to confirm recovery between shots.
      * @return A sequential IVY {@link Command} executing the complete launch sequence.
      */
-    public Command runLaunchSequence(double speed, double targetVelocity) {
+    public Command runLaunchSequence(double targetVelocity) {
         return sequential(
-                // Initial setup: Flip down, start motor, flip up, flip down
+                //Setup
                 instant(this::flipDown),
-                infinite(() -> runShooter(speed)).until(() -> isAtTargetSpeed(targetVelocity)), // initial motor ramp-up
+                infinite(() -> runShooter(targetVelocity)).until(() -> isAtTargetSpeed(targetVelocity)), // initial motor ramp-up
+
+                //Shot 1
                 instant(this::flipUp),
                 instant(this::flipDown),
-
-                // Shot 1 Recovery & Feed
                 waitUntil(() -> isAtTargetSpeed(targetVelocity)),
+
+                //Shot 2
+                instant(this::flipUp),
+                instant(this::flipDown),
+                waitUntil(() -> isAtTargetSpeed(targetVelocity)),
+
+                //Shot 3
+                instant(this::flipUp),
+                instant(this::flipDown),
+                waitUntil(() -> isAtTargetSpeed(targetVelocity)),
+
+                //Shot 4
                 instant(this::flipUp),
                 instant(this::flipDown),
 
-                // Shot 2 Recovery & Feed
-                waitUntil(() -> isAtTargetSpeed(targetVelocity)),
-                instant(this::flipUp),
-                instant(this::flipDown),
-
-                // Shot 3 Recovery & Feed
-                waitUntil(() -> isAtTargetSpeed(targetVelocity)),
-                instant(this::flipUp),
-                instant(this::flipDown),
-
-                // Shot 4 Recovery & Feed
-                waitUntil(() -> isAtTargetSpeed(targetVelocity)),
-                instant(this::flipUp),
-
-                // Post-launch cleanup: stop motor & reset flipper position
+                //Stop
                 instant(() -> runShooter(0)),
                 instant(this::flipDown)
-        ).requiring(this);
+        )
+                .requiring(this)
+                .setPriority(0);
     }
+
+    public Command runLaunchSequenceSS(double targetVelocity) {
+        return sequential(
+                //Setup
+                instant(this::flipDown),
+                infinite(() -> runShooter(targetVelocity)).until(() -> isAtTargetSpeed(targetVelocity)),
+
+                //Shoot
+                instant(this::flipUp),
+                instant(this::flipDown),
+
+                //Stop
+                instant(() -> runShooter(0)),
+                instant(this::flipDown)
+        )
+                .requiring(this)
+                .setPriority(0);
+    }
+
+    public Command flipCommand(){
+        return instant(this::flip)
+                .requiring(this)
+                .setPriority(1)
+                .setConflictBehavior(ConflictBehavior.OVERRIDE);
+    }
+
 }

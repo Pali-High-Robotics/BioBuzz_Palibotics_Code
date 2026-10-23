@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 
 public class Constants {
     public static Follower create(HardwareMap h) {
@@ -25,10 +26,10 @@ public class Constants {
         );
     }
     public static MecanumConfig drivetrainConfig = new MecanumConfig(c -> {
-        c.frontLeftName.set("lf");
-        c.frontRightName.set("rf");
-        c.backLeftName.set("lr");
-        c.backRightName.set("rr");
+        c.frontLeftName.set(RobotConstants.lf);
+        c.frontRightName.set(RobotConstants.rf);
+        c.backLeftName.set(RobotConstants.lr);
+        c.backRightName.set(RobotConstants.rr);
         c.frontLeftDirection.set(DcMotorSimple.Direction.REVERSE);
         c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
         c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);

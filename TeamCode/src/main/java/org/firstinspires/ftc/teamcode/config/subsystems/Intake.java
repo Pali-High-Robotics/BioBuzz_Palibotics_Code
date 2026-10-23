@@ -4,6 +4,7 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
@@ -54,19 +55,11 @@ public class Intake {
         return intakeMotor.getCurrentPosition();
     }
 
-    public CommandBuilder runIntakeCommand(Direction direction) {
-        return Commands.infinite(() -> runIntake(direction))
+    public CommandBuilder runIntakeCommand(Gamepad gamepad){
+        return Commands.infinite(() -> runIntake(gamepad.left_trigger * RobotConstants.INTAKE_SPEED))
                 .requiring(this);
     }
 
-    public CommandBuilder runIntakeCommand(double speed) {
-        return Commands.infinite(() -> runIntake(speed))
-                .requiring(this);
-    }
-
-    /**
-     * Returns an instant IVY command to stop the intake motor.
-     */
     public Command stopIntakeCommand() {
         return instant(() -> runIntake(0)).requiring(this);
     }

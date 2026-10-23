@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 
 @TeleOp (name = "Blue")
 public class BlueTeleOp extends BaseTeleOp{
-    public BlueTeleOp(){
-        super(Alliance.BLUE);
+    public BlueTeleOp(){ super(Alliance.BLUE);
     }
 }

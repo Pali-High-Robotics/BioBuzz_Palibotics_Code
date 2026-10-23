@@ -104,18 +104,8 @@ public class Chassis {
                 .requiring(this);
     }
 
-    public Command turnToCommand(double degrees){
+    public Command turnToCommand(double degrees) {
         return hold(follower, new Pose(getPose().x(), getPose().y(), degrees))
-                .requiring(this);
-    }
-
-    public Command followPathCommand(CompoundPath path, boolean holdEnd, double power){
-        return follow(follower, path)
-                .requiring(this);
-    }
-
-    public Command followPathCommand(CompoundPath path, double power){
-        return follow(follower, path)
                 .requiring(this);
     }
 
