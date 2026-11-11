@@ -29,9 +29,9 @@ public class RobotConstants {
     public static final double INTAKE_SPEED = 1;
 
     /** Flipper servo position (0.0 - 1.0) for lower/resting state. */
-    public static final double flipperDownPos = 0.75;
+    public static final double flipperDownPos = 0.7;
     /** Flipper servo position (0.0 - 1.0) for upper/feeding state. */
-    public static final double flipperUpPos = 0;
+    public static final double flipperUpPos = 0.4;
 
     /** Flywheel power percentage scaling factor. */
     public static final double SHOOTER_SPEED = 0.35;
