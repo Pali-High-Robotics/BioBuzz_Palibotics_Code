@@ -4,6 +4,7 @@ import com.pedropathing.math.Pose;
 
 import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
+import org.firstinspires.ftc.teamcode.config.lib.PoseStorage;
 import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 import org.firstinspires.ftc.teamcode.opmodes.CommandOpMode;
 
@@ -35,7 +36,19 @@ public class BaseTeleOp extends CommandOpMode {
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap, alliance); // or new Robot(hardwareMap, alliance)
+        robot = new Robot(hardwareMap, alliance);
+    }
+
+    @Override
+    public void init_loop() {
+        super.init_loop();
+        telemetry.addData("Status", "TeleOp Ready (%s)", alliance);
+        telemetry.addData("Starting Pose", "X: %.1f, Y: %.1f, H: %.1f deg",
+                robot.chassis.getPose().x(),
+                robot.chassis.getPose().y(),
+                Math.toDegrees(robot.chassis.getPose().heading()));
+        // telemetry.addData("Pose Source", PoseStorage.getSource()); // [DISABLED]
+        telemetry.update();
     }
 
     @Override
@@ -97,5 +110,14 @@ public class BaseTeleOp extends CommandOpMode {
                 robot.chassis.getPose().y(),
                 Math.toDegrees(robot.chassis.getPose().heading()));
         telemetry.update();
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        // [DISABLED] Uncomment to save pose on TeleOp stop:
+        // if (robot != null && robot.chassis != null) {
+        //     PoseStorage.save(robot.chassis.getPose(), true);
+        // }
     }
 }

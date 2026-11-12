@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 
-@Autonomous(name = "Shoot to Park Blue", group = "Autonomous")
+@Autonomous(name = "ShootAndParkBlue", group = "Autonomous", preselectTeleOp = "Blue")
 public class ShootToParkBlue extends ShootToParkAuto {
     public ShootToParkBlue() {
         super(Alliance.BLUE);
