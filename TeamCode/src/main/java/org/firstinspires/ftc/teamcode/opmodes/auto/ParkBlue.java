@@ -1,0 +1,13 @@
+package org.firstinspires.ftc.teamcode.opmodes.auto;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.config.lib.Alliance;
+
+@Autonomous(name = "Blue Park", group = "Autonomous")
+public class ParkBlue extends ParkAuto {
+    public ParkBlue() {
+        super(Alliance.BLUE);
+    }
+}
+

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.config.subsystems;
 
 import static com.pedropathing.ivy.commands.Commands.infinite;
 import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.commands.Commands.waitUntil;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
@@ -33,6 +34,7 @@ public class Shooter {
         rightShooterMotor = hardwareMap.get(DcMotorEx.class, RobotConstants.rightShooterMotor);
         flipperServo = hardwareMap.get(Servo.class, RobotConstants.flipperServo);
         this.alliance = alliance;
+        updatePIDFCoefficients();
     }
 
     public void update() {
@@ -95,22 +97,43 @@ public class Shooter {
     }
 
     /**
-     * Checks whether the flywheel velocity is within a +/- 5% tolerance window of target speed.
+     * Updates velocity PIDF coefficients on both shooter motors from RobotConstants.
+     */
+    public void updatePIDFCoefficients() {
+        leftShooterMotor.setVelocityPIDFCoefficients(
+                RobotConstants.LEFT_SHOOTER_P,
+                RobotConstants.LEFT_SHOOTER_I,
+                RobotConstants.LEFT_SHOOTER_D,
+                RobotConstants.LEFT_SHOOTER_F
+        );
+        rightShooterMotor.setVelocityPIDFCoefficients(
+                RobotConstants.RIGHT_SHOOTER_P,
+                RobotConstants.RIGHT_SHOOTER_I,
+                RobotConstants.RIGHT_SHOOTER_D,
+                RobotConstants.RIGHT_SHOOTER_F
+        );
+    }
+
+    /**
+     * Checks whether both flywheel velocities are within a +/- 5% tolerance window of target speed.
      *
      * @param targetVelocity Target velocity in TPS.
      */
     public boolean isAtTargetSpeed(double targetVelocity) {
-        double currentVel = Math.abs(leftShooterMotor.getVelocity());
-        return currentVel >= targetVelocity * 0.95 && currentVel <= targetVelocity * 1.05;
+        double leftVel = Math.abs(leftShooterMotor.getVelocity());
+        double rightVel = Math.abs(rightShooterMotor.getVelocity());
+        return leftVel >= targetVelocity * 0.95 && leftVel <= targetVelocity * 1.05
+                && rightVel >= targetVelocity * 0.95 && rightVel <= targetVelocity * 1.05;
     }
 
     /**
-     * Command continuously throttling shooter velocity proportionally to Gamepad right trigger.
+     * Command continuously throttling shooter velocity proportionally to Gamepad left trigger.
      */
     public CommandBuilder runShooterManualCommand(Gamepad gamepad){
         return Commands.infinite(() ->
-                runShooter(gamepad.right_trigger * RobotConstants.SHOOTER_TARGET_VELOCITY))
-                .until(() -> gamepad.right_trigger <= 0.05)
+                runShooter(gamepad.left_trigger * RobotConstants.SHOOTER_TARGET_VELOCITY))
+                .until(() -> gamepad.left_trigger <= 0.05)
+                .setEnd(endCondition -> runShooter(0))
                 .requiring(this)
                 .setPriority(1)
                 .setConflictBehavior(ConflictBehavior.OVERRIDE);
@@ -125,26 +148,36 @@ public class Shooter {
         return sequential(
                 //Setup
                 instant(this::flipDown),
+                waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 infinite(() -> runShooter(targetVelocity)).until(() -> isAtTargetSpeed(targetVelocity)), // initial motor ramp-up
+                waitMs(RobotConstants.SHOOTER_SETTLE_WAIT_MS),
 
                 //Shot 1
                 instant(this::flipUp),
+                waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
+                waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 waitUntil(() -> isAtTargetSpeed(targetVelocity)),
 
                 //Shot 2
                 instant(this::flipUp),
+                waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
+                waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 waitUntil(() -> isAtTargetSpeed(targetVelocity)),
 
                 //Shot 3
                 instant(this::flipUp),
+                waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
+                waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 waitUntil(() -> isAtTargetSpeed(targetVelocity)),
 
                 //Shot 4
                 instant(this::flipUp),
+                waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
+                waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
 
                 //Stop
                 instant(() -> runShooter(0)),
@@ -163,11 +196,15 @@ public class Shooter {
         return sequential(
                 //Setup
                 instant(this::flipDown),
+                waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 infinite(() -> runShooter(targetVelocity)).until(() -> isAtTargetSpeed(targetVelocity)),
+                waitMs(RobotConstants.SHOOTER_SETTLE_WAIT_MS),
 
                 //Shoot
                 instant(this::flipUp),
+                waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
+                waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
 
                 //Stop
                 instant(() -> runShooter(0)),
