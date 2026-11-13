@@ -39,6 +39,17 @@ public class BaseTeleOp extends CommandOpMode {
     }
 
     @Override
+    public void init_loop() {
+        robot.update();
+        telemetry.addData("Status", "Initialized (%s)", alliance);
+        telemetry.addData("Pose", "X: %.1f, Y: %.1f, H: %.1f deg",
+                robot.chassis.getPose().x(),
+                robot.chassis.getPose().y(),
+                Math.toDegrees(robot.chassis.getPose().heading()));
+        telemetry.update();
+    }
+
+    @Override
     public void start() {
 
         robot.chassis.setFieldCentric(false);
@@ -53,6 +64,7 @@ public class BaseTeleOp extends CommandOpMode {
 
     @Override
     public void loop() {
+        robot.update();
         super.loop();
         boolean triggerHeld = gamepad1.left_trigger > 0.05;
 
@@ -76,18 +88,18 @@ public class BaseTeleOp extends CommandOpMode {
         triggerWasHeld = triggerHeld;
 
         if (gamepad1.leftBumperWasPressed()) {
-            Pose target = robot.chassis.findClosestAlliancePose(alliance, RobotConstants.HALF_TILE_INCHES);
+            Pose target = robot.chassis.findClosestAlliancePose(alliance, RobotConstants.TILE_SIZE_INCHES);
             if (target != null) {
                 robot.chassis.snapToPose(target);
+                telemetry.addData("Button Pressed", target.toString());
+            } else {
+                telemetry.addData("Button Pressed", false);
             }
-            telemetry.addData("Button Pressed", target.toString());
         }
 
         if (gamepad1.xWasPressed()) {
             schedule(robot.intake.togglePollinatorCommand());
         }
-
-        robot.update();
 
         if (robot.chassis.isSnapping()) {
             telemetry.addData("Auto-Align", "SNAPPING to (%.1f, %.1f)",

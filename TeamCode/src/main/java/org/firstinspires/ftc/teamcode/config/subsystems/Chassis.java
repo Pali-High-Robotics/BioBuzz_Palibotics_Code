@@ -31,6 +31,7 @@ public class Chassis {
     public Chassis(HardwareMap hardwareMap, Alliance alliance, Pose startPos) {
         this.follower = Constants.create(hardwareMap);
         this.follower.setPose(startPos);
+        this.follower.update();
         this.alliance = alliance;
     }
 

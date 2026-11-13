@@ -66,11 +66,11 @@ public class RobotConstants {
     // --- Field Dimensions & Shoot Alignment Poses ---
     public static final double TILE_SIZE_INCHES = 24.0;
     public static final double HALF_TILE_INCHES = 12.0;
-    public static final Pose defaultPose = new Pose(132.75, 132.75, 270);
-    public static final Pose rightRedShoot = new Pose(58.33, 11.66, Math.toRadians(90));
-    public static final Pose leftRedShoot = new Pose(58.33, 129.83, Math.toRadians(270));
-    public static final Pose rightBlueShoot = new Pose(81.91, 129.83, Math.toRadians(270));
-    public static final Pose leftBlueShoot = new Pose(81.91, 11.66, Math.toRadians(90));
+    public static final Pose defaultPose = new Pose(131.75, 131.75, Math.toRadians(270));
+    public static final Pose rightRedShoot = new Pose(58.33, 11.66, Math.toRadians(270));
+    public static final Pose leftRedShoot = new Pose(58.33, 129.83, Math.toRadians(90));
+    public static final Pose rightBlueShoot = new Pose(81.91, 129.83, Math.toRadians(90));
+    public static final Pose leftBlueShoot = new Pose(81.91, 11.66, Math.toRadians(270));
 
     /**
      * Returns the pre-defined shooting poses for the specified alliance.
