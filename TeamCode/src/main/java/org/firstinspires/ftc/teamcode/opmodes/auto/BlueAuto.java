@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 
-@Autonomous(name = "BlueFlowerAuto", group = "Autonomous", preselectTeleOp = "Blue")
+@Autonomous(name = "BlueFlowerAuto", group = "Autonomous")
 public class BlueAuto extends FlowerAuto {
     public BlueAuto() {
         super(Alliance.BLUE);

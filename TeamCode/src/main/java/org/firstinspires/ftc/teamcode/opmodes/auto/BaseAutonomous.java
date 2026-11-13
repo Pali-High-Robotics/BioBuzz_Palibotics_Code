@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
-import org.firstinspires.ftc.teamcode.config.lib.PoseStorage;
 
 /**
  * Abstract base class providing common infrastructure for any autonomous routine.
@@ -59,7 +58,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         Pose startPose = getStartPose();
         follower.setPose(startPose);
         follower.update();
-        // PoseStorage.save(startPose, false); // [DISABLED] Uncomment to save start pose
 
         robot.shooter.flipDown();
         robot.intake.initServos();
@@ -74,30 +72,24 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
         schedule(getRoutine());
 
-        try {
-            while (opModeIsActive()) {
-                robot.update();
-                Scheduler.execute();
+        while (opModeIsActive()) {
+            robot.update();
+            Scheduler.execute();
 
-                telemetry.addData("Alliance", alliance);
-                telemetry.addData("x", "%.2f", follower.pose().x());
-                telemetry.addData("y", "%.2f", follower.pose().y());
-                telemetry.addData("heading", "%.1f deg", Math.toDegrees(follower.pose().heading()));
+            telemetry.addData("Alliance", alliance);
+            telemetry.addData("x", "%.2f", follower.pose().x());
+            telemetry.addData("y", "%.2f", follower.pose().y());
+            telemetry.addData("heading", "%.1f deg", Math.toDegrees(follower.pose().heading()));
 
-                if (follower.currentPath() != null) {
-                    telemetry.addData("Distance remaining", "%.2f", follower.distanceToEndpoint());
-                    telemetry.addData("Path completion", "%.1f%%", follower.parametricCompletion() * 100.0);
-                    telemetry.addData("Path index", follower.pathIndex());
-                }
-
-                telemetry.update();
+            if (follower.currentPath() != null) {
+                telemetry.addData("Distance remaining", "%.2f", follower.distanceToEndpoint());
+                telemetry.addData("Path completion", "%.1f%%", follower.parametricCompletion() * 100.0);
+                telemetry.addData("Path index", follower.pathIndex());
             }
-        } finally {
-            // [DISABLED] Uncomment to save pose on auto end or sudden stop:
-            // if (follower != null) {
-            //     PoseStorage.save(follower.pose(), true);
-            // }
-            Scheduler.reset();
+
+            telemetry.update();
         }
+
+        Scheduler.reset();
     }
 }

@@ -37,7 +37,7 @@ public class RobotConstants {
     public static final double pollinatorDownPos = 0.40;
     public static final double FLIPPER_UP_WAIT_MS = 250;
     /** Delay in milliseconds for flipper to return down and ball to settle before next shot. */
-    public static final double FLIPPER_DOWN_WAIT_MS = 450;
+    public static final double FLIPPER_DOWN_WAIT_MS = 1000;
     /** Delay in milliseconds for shooter velocity to stabilize at target speed before firing. */
     public static final double SHOOTER_SETTLE_WAIT_MS = 200;
 
@@ -60,13 +60,13 @@ public class RobotConstants {
     public static double RIGHT_SHOOTER_D = 0.0;
     public static final double blockerUpPos = 0.0;
     public static final double blockerDownPos = 0.5;
-    public static final double SHOOTER_SPEED = 0.32; // WORKS: 0.35 (V1) //Works (reasonable starting pt): 0.40 (V2)
+    public static final double SHOOTER_SPEED = 0.27; // WORKS: 0.35 (V1) //Works (reasonable starting pt): 0.40 (V2)
     public static final double SHOOTER_TARGET_VELOCITY = SHOOTER_SPEED * SHOOT_MOTOR_TPS;
 
     // --- Field Dimensions & Shoot Alignment Poses ---
     public static final double TILE_SIZE_INCHES = 24.0;
     public static final double HALF_TILE_INCHES = 12.0;
-    public static final Pose defaultPose = new Pose(93.34, 18.74, 270);
+    public static final Pose defaultPose = new Pose(132.75, 132.75, 270);
     public static final Pose rightRedShoot = new Pose(58.33, 11.66, Math.toRadians(90));
     public static final Pose leftRedShoot = new Pose(58.33, 129.83, Math.toRadians(270));
     public static final Pose rightBlueShoot = new Pose(81.91, 129.83, Math.toRadians(270));
