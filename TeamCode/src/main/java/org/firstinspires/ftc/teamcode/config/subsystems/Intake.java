@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.config.subsystems;
 
+import static com.pedropathing.ivy.commands.Commands.infinite;
+import static com.pedropathing.ivy.commands.Commands.instant;
+
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
-import com.pedropathing.ivy.commands.Commands;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,13 +14,11 @@ import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 import org.firstinspires.ftc.teamcode.config.lib.Direction;
 import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 
-import static com.pedropathing.ivy.commands.Commands.*;
-
 /**
  * Subsystem controlling the robot's intake motor, pollinator servo, and blocker servo.
  */
 public class Intake {
-    private DcMotorEx intakeMotor;
+    private final DcMotorEx intakeMotor;
     private final Servo pollinator;
     private final Servo blocker;
     private final Alliance alliance;
@@ -49,6 +49,8 @@ public class Intake {
 
     /**
      * Runs the intake motor at preset speed in the specified direction.
+     *
+     * @param direction Rotation direction for intake.
      */
     public void runIntake(Direction direction) {
         if (direction == Direction.FORWARDS) {
@@ -62,6 +64,7 @@ public class Intake {
 
     /**
      * Sets the intake motor power.
+     *
      * @param speed Motor power in range [-1.0, 1.0].
      */
     public void runIntake(double speed) {
@@ -77,6 +80,7 @@ public class Intake {
 
     /**
      * Explicitly sets pollinator position.
+     *
      * @param down true to lower pollinator, false to raise.
      */
     public void setPollinator(boolean down) {
@@ -99,6 +103,7 @@ public class Intake {
 
     /**
      * Sets the blocker servo position.
+     *
      * @param up true to raise blocker (open), false to lower (closed).
      */
     public void setBlocker(boolean up) {
@@ -123,18 +128,19 @@ public class Intake {
 
     /**
      * Command continuously running the intake proportionally to Gamepad 1 right trigger.
-     * Right bumper held = forward direction, otherwise reverse.
+     * Right bumper held selects forward direction; default is reverse.
      * Blocker auto-raises when trigger is pressed.
+     *
+     * @param gamepad Gamepad providing trigger and bumper inputs.
      */
-    public CommandBuilder runIntakeCommand(Gamepad gamepad){
-        return Commands.infinite(() -> {
-            // right_bumper held = forward, otherwise = reverse
+    public CommandBuilder runIntakeCommand(Gamepad gamepad) {
+        return infinite(() -> {
             if (gamepad.right_bumper) {
                 runIntake(RobotConstants.INTAKE_SPEED * gamepad.right_trigger);
             } else {
                 runIntake(RobotConstants.INTAKE_SPEED * -gamepad.right_trigger);
             }
-            // blocker auto-raises when trigger pressed
+
             if (gamepad.right_trigger >= 0.05) {
                 setBlocker(true);
             } else {

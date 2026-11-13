@@ -22,6 +22,7 @@ public abstract class CommandOpMode extends OpMode {
 
     /**
      * Schedules one or more commands to the IVY scheduler.
+     *
      * @param commands The commands to schedule.
      */
     public void schedule(Command... commands) {

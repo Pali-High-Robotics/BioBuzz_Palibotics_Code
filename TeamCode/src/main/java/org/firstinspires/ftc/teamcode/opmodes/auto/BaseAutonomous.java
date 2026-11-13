@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
+import org.firstinspires.ftc.teamcode.config.lib.PoseStorage;
 
 /**
  * Abstract base class providing common infrastructure for any autonomous routine.
@@ -23,16 +24,23 @@ public abstract class BaseAutonomous extends LinearOpMode {
     protected Robot robot;
     protected Follower follower;
 
+    /**
+     * Creates an autonomous base instance.
+     * Base waypoints are authored for RED alliance; BLUE alliance is mirrored across the field center (72, 72).
+     *
+     * @param alliance Competition match alliance.
+     */
     public BaseAutonomous(Alliance alliance) {
         this.alliance = alliance;
-        // Base waypoints are authored for RED alliance; BLUE alliance is mirrored across the field center (72, 72).
         this.poseFactory = (alliance == Alliance.BLUE)
                 ? PoseFactory.degrees().mirrorAroundPoint(72, 72)
                 : PoseFactory.degrees();
     }
 
     /**
-     * @return The starting pose of the robot on the field for this routine.
+     * Returns the starting pose of the robot on the field for this routine.
+     *
+     * @return Field starting pose.
      */
     protected abstract Pose getStartPose();
 
@@ -43,6 +51,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     /**
      * Constructs and returns the complete autonomous Command sequence to execute.
+     *
+     * @return Autonomous sequence command.
      */
     protected abstract Command getRoutine();
 
@@ -90,6 +100,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
             telemetry.update();
         }
 
+        PoseStorage.save(follower.pose());
         Scheduler.reset();
     }
 }

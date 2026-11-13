@@ -4,10 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
 
-@Autonomous(name = "ShootAndParkBlue", group = "Autonomous")
+/**
+ * Autonomous routine for the Blue Alliance that shoots pre-loaded pollen and parks.
+ */
+@Autonomous(name = "ShootAndParkBlue", group = "Autonomous", preselectTeleOp = "Blue")
 public class ShootToParkBlue extends ShootToParkAuto {
+
     public ShootToParkBlue() {
         super(Alliance.BLUE);
     }
 }
-

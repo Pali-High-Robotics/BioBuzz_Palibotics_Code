@@ -40,4 +40,3 @@ public abstract class ParkAuto extends BaseAutonomous {
         return follow(follower, parkPath);
     }
 }
-

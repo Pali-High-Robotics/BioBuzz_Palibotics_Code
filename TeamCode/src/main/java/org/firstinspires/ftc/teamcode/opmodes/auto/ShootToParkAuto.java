@@ -44,14 +44,9 @@ public abstract class ShootToParkAuto extends BaseAutonomous {
     @Override
     protected Command getRoutine() {
         return sequential(
-                // 1. Initial 4x pollen launch
                 robot.shooter.runLaunchSequence(RobotConstants.SHOOTER_TARGET_VELOCITY),
                 waitMs(RobotConstants.AUTO_POST_LAUNCH1_WAIT_MS),
-
-                // 2. Drive to park
                 follow(follower, launchtoParkPath),
-
-                // 3. Ensure shooter and flipper are idle
                 instant(() -> {
                     robot.shooter.runShooter(0);
                     robot.shooter.flipDown();
@@ -59,4 +54,3 @@ public abstract class ShootToParkAuto extends BaseAutonomous {
         );
     }
 }
-

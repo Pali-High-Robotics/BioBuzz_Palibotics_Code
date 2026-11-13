@@ -4,6 +4,7 @@ import com.pedropathing.math.Pose;
 
 import org.firstinspires.ftc.teamcode.config.Robot;
 import org.firstinspires.ftc.teamcode.config.lib.Alliance;
+import org.firstinspires.ftc.teamcode.config.lib.PoseStorage;
 import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 import org.firstinspires.ftc.teamcode.opmodes.CommandOpMode;
 
@@ -35,7 +36,7 @@ public class BaseTeleOp extends CommandOpMode {
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap, alliance); // or new Robot(hardwareMap, alliance)
+        robot = new Robot(hardwareMap, alliance, PoseStorage.get());
     }
 
     @Override
@@ -51,7 +52,6 @@ public class BaseTeleOp extends CommandOpMode {
 
     @Override
     public void start() {
-
         robot.chassis.setFieldCentric(false);
         robot.shooter.flipDown();
         robot.intake.initServos();
@@ -88,7 +88,7 @@ public class BaseTeleOp extends CommandOpMode {
         triggerWasHeld = triggerHeld;
 
         if (gamepad1.leftBumperWasPressed()) {
-            Pose target = robot.chassis.findClosestAlliancePose(alliance, RobotConstants.TILE_SIZE_INCHES);
+            Pose target = robot.chassis.findClosestAlliancePose(alliance, RobotConstants.HALF_TILE_INCHES);
             if (target != null) {
                 robot.chassis.snapToPose(target);
                 telemetry.addData("Button Pressed", target.toString());

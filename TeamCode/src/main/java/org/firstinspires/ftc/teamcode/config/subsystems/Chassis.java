@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.config.subsystems;
 
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
+import static com.pedropathing.ivy.pedro.PedroCommands.hold;
+
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
-import com.pedropathing.math.Pose;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
-import static com.pedropathing.ivy.pedro.PedroCommands.*;
-
+import com.pedropathing.math.Pose;
 import com.pedropathing.paths.CompoundPath;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -44,7 +45,6 @@ public class Chassis {
 
     /**
      * Manual drive using gamepad sticks (Left Y: drive, Left X: strafe, Right X: turn).
-     * Respects the current field-centric setting.
      * If an auto-align snap target is active, driver stick movement cancels the snap
      * and resumes manual control.
      */
@@ -56,7 +56,7 @@ public class Chassis {
             if (stickMoved) {
                 cancelSnap();
             } else {
-                return; // PedroPathing is actively holding the snap target pose
+                return;
             }
         }
 
@@ -66,7 +66,6 @@ public class Chassis {
 
         DrivePowers powers = new DrivePowers(drive, strafe, turn);
 
-        // Respects the fieldCentric toggle state
         if (fieldCentric) {
             powers = ManualDrive.fieldCentric(powers, getPose().heading());
         }
@@ -74,17 +73,11 @@ public class Chassis {
         follower.manual(powers);
     }
 
-    /*
-     * =====================
-     * = GETTERS & SETTERS =
-     * =====================
-     */
-
     /**
      * Returns the current estimated robot pose (x, y, heading) from the follower.
      */
     public Pose getPose() {
-        return follower.pose(); // Fixed from closestPose() to follower.pose() for global localization
+        return follower.pose();
     }
 
     public Follower getFollower() {
@@ -142,7 +135,7 @@ public class Chassis {
      * Finds the closest valid shooting pose for the given alliance within maxDistance.
      *
      * @param alliance RED or BLUE alliance.
-     * @param maxDistance Maximum distance in inches (e.g. half a tile).
+     * @param maxDistance Maximum distance in inches.
      * @return The closest Pose within range, or null if none are within maxDistance.
      */
     public Pose findClosestAlliancePose(Alliance alliance, double maxDistance) {
@@ -160,12 +153,6 @@ public class Chassis {
         return closest;
     }
 
-    /*
-     * ====================
-     * = CHASSIS COMMANDS =
-     * ====================
-     */
-
     /**
      * Default teleop driving command running continuously from gamepad inputs.
      */
@@ -179,7 +166,7 @@ public class Chassis {
      *
      * @param pose Target field pose to hold.
      */
-    public Command holdPosCommand(Pose pose){
+    public Command holdPosCommand(Pose pose) {
         return hold(follower, pose)
                 .requiring(this);
     }
@@ -187,7 +174,7 @@ public class Chassis {
     /**
      * Command to hold the robot at its current position.
      */
-    public Command holdPosCommand(){
+    public Command holdPosCommand() {
         return hold(follower)
                 .requiring(this);
     }
@@ -195,7 +182,7 @@ public class Chassis {
     /**
      * Command to turn and hold at a target heading angle at the current (x, y) position.
      *
-     * @param degrees Target heading angle passed to the target {@link Pose}.
+     * @param degrees Target heading angle in degrees.
      */
     public Command turnToCommand(double degrees) {
         return hold(follower, new Pose(getPose().x(), getPose().y(), degrees))
@@ -207,7 +194,7 @@ public class Chassis {
      *
      * @param path The path sequence to execute.
      */
-    public Command followPathCommand(CompoundPath path){
+    public Command followPathCommand(CompoundPath path) {
         return follow(follower, path)
                 .requiring(this);
     }

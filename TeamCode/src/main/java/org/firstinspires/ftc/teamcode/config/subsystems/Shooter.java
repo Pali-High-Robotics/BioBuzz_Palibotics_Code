@@ -9,7 +9,6 @@ import static com.pedropathing.ivy.groups.Groups.sequential;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.behaviors.ConflictBehavior;
-import com.pedropathing.ivy.commands.Commands;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -37,11 +36,12 @@ public class Shooter {
         updatePIDFCoefficients();
     }
 
-    public void update() {
-    }
+    public void update() {}
 
     /**
      * Runs the shooter motors at the preset target velocity in the specified direction.
+     *
+     * @param direction Target rotation direction.
      */
     public void runShooter(Direction direction) {
         if (direction == Direction.FORWARDS) {
@@ -128,10 +128,11 @@ public class Shooter {
 
     /**
      * Command continuously throttling shooter velocity proportionally to Gamepad left trigger.
+     *
+     * @param gamepad Gamepad providing trigger input.
      */
-    public CommandBuilder runShooterManualCommand(Gamepad gamepad){
-        return Commands.infinite(() ->
-                runShooter(gamepad.left_trigger * RobotConstants.SHOOTER_TARGET_VELOCITY))
+    public CommandBuilder runShooterManualCommand(Gamepad gamepad) {
+        return infinite(() -> runShooter(gamepad.left_trigger * RobotConstants.SHOOTER_TARGET_VELOCITY))
                 .until(() -> gamepad.left_trigger <= 0.05)
                 .setEnd(endCondition -> runShooter(0))
                 .requiring(this)
@@ -146,40 +147,34 @@ public class Shooter {
      */
     public Command runLaunchSequence(double targetVelocity) {
         return sequential(
-                //Setup
                 instant(this::flipDown),
                 waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
-                infinite(() -> runShooter(targetVelocity)).until(() -> isAtTargetSpeed(targetVelocity)), // initial motor ramp-up
+                infinite(() -> runShooter(targetVelocity)).until(() -> isAtTargetSpeed(targetVelocity)),
                 waitMs(RobotConstants.SHOOTER_SETTLE_WAIT_MS),
 
-                //Shot 1
                 instant(this::flipUp),
                 waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
                 waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 waitUntil(() -> isAtTargetSpeed(targetVelocity)),
 
-                //Shot 2
                 instant(this::flipUp),
                 waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
                 waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 waitUntil(() -> isAtTargetSpeed(targetVelocity)),
 
-                //Shot 3
                 instant(this::flipUp),
                 waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
                 waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 waitUntil(() -> isAtTargetSpeed(targetVelocity)),
 
-                //Shot 4
                 instant(this::flipUp),
                 waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
                 waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
 
-                //Stop
                 instant(() -> runShooter(0)),
                 instant(this::flipDown)
         )
@@ -188,25 +183,22 @@ public class Shooter {
     }
 
     /**
-     * Returns a sequential command for a single-shot (SS) automated launch sequence.
+     * Returns a sequential command for a single-shot automated launch sequence.
      *
      * @param targetVelocity Target flywheel velocity in TPS.
      */
     public Command runLaunchSequenceSS(double targetVelocity) {
         return sequential(
-                //Setup
                 instant(this::flipDown),
                 waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
                 infinite(() -> runShooter(targetVelocity)).until(() -> isAtTargetSpeed(targetVelocity)),
                 waitMs(RobotConstants.SHOOTER_SETTLE_WAIT_MS),
 
-                //Shoot
                 instant(this::flipUp),
                 waitMs(RobotConstants.FLIPPER_UP_WAIT_MS),
                 instant(this::flipDown),
                 waitMs(RobotConstants.FLIPPER_DOWN_WAIT_MS),
 
-                //Stop
                 instant(() -> runShooter(0)),
                 instant(this::flipDown)
         )
@@ -217,11 +209,10 @@ public class Shooter {
     /**
      * Command that toggles the flipper servo position.
      */
-    public Command flipCommand(){
+    public Command flipCommand() {
         return instant(this::flip)
                 .requiring(this)
                 .setPriority(1)
                 .setConflictBehavior(ConflictBehavior.OVERRIDE);
     }
-
 }

@@ -86,11 +86,9 @@ public abstract class FlowerAuto extends BaseAutonomous {
     @Override
     protected Command getRoutine() {
         return sequential(
-                // 1. Initial 4x launch sequence and settle delay
                 robot.shooter.runLaunchSequence(RobotConstants.SHOOTER_TARGET_VELOCITY),
                 waitMs(RobotConstants.AUTO_POST_LAUNCH1_WAIT_MS),
 
-                // 2. Drive to intake; activate intake & blocker towards the end of the path
                 parallel(
                         follow(follower, intakePath),
                         sequential(
@@ -101,10 +99,8 @@ public abstract class FlowerAuto extends BaseAutonomous {
                                 })
                         )
                 ),
-                // Run intake for dwell time at endpoint
                 waitMs(RobotConstants.AUTO_INTAKE_DWELL_MS),
 
-                // 3. Stop intake, close blocker, move to launch 2
                 instant(() -> {
                     robot.intake.runIntake(0);
                     robot.intake.setBlocker(false);
@@ -112,10 +108,8 @@ public abstract class FlowerAuto extends BaseAutonomous {
                 follow(follower, movetolaunch2Path),
                 follow(follower, launch2Path),
 
-                // 4. Second 4x launch sequence
                 robot.shooter.runLaunchSequence(RobotConstants.SHOOTER_TARGET_VELOCITY),
 
-                // 5. Flower intake: lower pollinator, start intake with blocker open
                 instant(() -> {
                     robot.intake.setPollinatorDown();
                     robot.intake.runIntake(Direction.FORWARDS);
@@ -124,7 +118,6 @@ public abstract class FlowerAuto extends BaseAutonomous {
                 follow(follower, flowerintakePath),
                 waitMs(RobotConstants.AUTO_FLOWER_INTAKE_DWELL_MS),
 
-                // 6. Return during launch 3: flip up pollinator, stop intake, close blocker
                 instant(() -> {
                     robot.intake.setPollinatorUp();
                     robot.intake.runIntake(0);
@@ -132,13 +125,10 @@ public abstract class FlowerAuto extends BaseAutonomous {
                 }),
                 follow(follower, launch3Path),
 
-                // 7. Third 4x launch sequence
                 robot.shooter.runLaunchSequence(RobotConstants.SHOOTER_TARGET_VELOCITY),
 
-                // 8. Move to parking point 7
                 follow(follower, path7),
 
-                // 9. Ensure all subsystems are safely secured/stopped
                 instant(() -> {
                     robot.intake.setPollinatorUp();
                     robot.intake.runIntake(0);
@@ -149,4 +139,3 @@ public abstract class FlowerAuto extends BaseAutonomous {
         );
     }
 }
-
