@@ -1,13 +1,16 @@
 # IVY Subsystem Implementation Guide
 
-This guide explains how to create, integrate, and control new subsystems using the **IVY Command module** within your project.
+This guide explains how to create, integrate, and control new subsystems using the **IVY Command
+module** within your project.
 
 ---
 
 ## 1. Subsystem Structure
+
 A subsystem should encapsulate hardware, state management, and **Command Factories**.
 
 ### Example: `LinearSlide.java`
+
 ```java
 package org.firstinspires.ftc.teamcode.config.subsystems;
 
@@ -19,7 +22,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class LinearSlide {
     private final DcMotorEx motor;
-    private double targetPosition = 0;
+    private final double targetPosition = 0;
 
     public LinearSlide(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, "slideMotor");
@@ -72,6 +75,7 @@ public class LinearSlide {
 ---
 
 ## 2. Integration into `Robot.java`
+
 All subsystems must be registered in the `Robot` class to centralize hardware access and updates.
 
 ```java
@@ -96,6 +100,7 @@ public class Robot {
 ---
 
 ## 3. Usage in `BaseTeleOp.java`
+
 Schedule the "Default Command" for your subsystems in the `start()` method.
 
 ```java
@@ -114,20 +119,30 @@ public void start() {
 ## 4. Key Concepts for Success
 
 ### Requirements are Locks
+
 When you call `.requiring(this)`, you are "locking" the subsystem.
-*   **Rule**: Only one command can own a requirement at a time.
-*   **Behavior**: If `TeleOp` is running `manualControl` (requires Slide), and an automated `goToPosition` command starts, IVY will **interrupt** `manualControl` automatically.
+
+* **Rule**: Only one command can own a requirement at a time.
+* **Behavior**: If `TeleOp` is running `manualControl` (requires Slide), and an automated
+  `goToPosition` command starts, IVY will **interrupt** `manualControl` automatically.
 
 ### Commands vs. Methods
-*   **Methods** (`setPower()`, `open()`): These are "What the hardware can do." Keep them simple.
-*   **Commands** (`manualControl()`, `goToPosition()`): These are "How the robot behaves." These manage logic, timing, and requirements.
+
+* **Methods** (`setPower()`, `open()`): These are "What the hardware can do." Keep them simple.
+* **Commands** (`manualControl()`, `goToPosition()`): These are "How the robot behaves." These
+  manage logic, timing, and requirements.
 
 ### Composition
+
 You can combine commands using IVY's group tools:
-*   `Commands.sequence(cmd1, cmd2)`: Run one after the other.
-*   `Commands.parallel(cmd1, cmd2)`: Run both at once.
-*   `cmd.alongWith(otherCmd)`: Run together.
-*   `cmd.andThen(otherCmd)`: Run sequentially.
+
+* `Commands.sequence(cmd1, cmd2)`: Run one after the other.
+* `Commands.parallel(cmd1, cmd2)`: Run both at once.
+* `cmd.alongWith(otherCmd)`: Run together.
+* `cmd.andThen(otherCmd)`: Run sequentially.
 
 ### Periodic Logic
-Always put repetitive calculations (like reading an IMU or running a PID loop) inside the subsystem's `update()` method, and ensure `Robot.update()` calls it. Do NOT put hardware initialization in `update()`.
+
+Always put repetitive calculations (like reading an IMU or running a PID loop) inside the
+subsystem's `update()` method, and ensure `Robot.update()` calls it. Do NOT put hardware
+initialization in `update()`.

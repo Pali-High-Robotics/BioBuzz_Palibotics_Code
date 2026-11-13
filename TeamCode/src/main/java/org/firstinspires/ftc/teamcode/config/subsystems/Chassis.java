@@ -23,11 +23,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
  * Supports teleoperated driving (robot-centric or field-centric) and autonomous movement.
  */
 public class Chassis {
+    public static final double STICK_DEADBAND = 0.15;
     private final Follower follower;
     private final Alliance alliance;
     private boolean fieldCentric = true;
     private Pose snapTarget = null;
-    public static final double STICK_DEADBAND = 0.15;
 
     public Chassis(HardwareMap hardwareMap, Alliance alliance, Pose startPos) {
         this.follower = Constants.create(hardwareMap);
@@ -134,7 +134,7 @@ public class Chassis {
     /**
      * Finds the closest valid shooting pose for the given alliance within maxDistance.
      *
-     * @param alliance RED or BLUE alliance.
+     * @param alliance    RED or BLUE alliance.
      * @param maxDistance Maximum distance in inches.
      * @return The closest Pose within range, or null if none are within maxDistance.
      */

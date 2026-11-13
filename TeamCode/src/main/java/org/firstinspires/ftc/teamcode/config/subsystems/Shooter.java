@@ -36,7 +36,8 @@ public class Shooter {
         updatePIDFCoefficients();
     }
 
-    public void update() {}
+    public void update() {
+    }
 
     /**
      * Runs the shooter motors at the preset target velocity in the specified direction.

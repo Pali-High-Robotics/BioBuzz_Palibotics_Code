@@ -21,29 +21,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "Full PIDF Auto-Tuner", group = "Tuning")
 public class AutoTuning extends LinearOpMode {
 
-    enum TargetMotor {
-        LEFT,
-        RIGHT
-    }
-
-    enum TuningMode {
-        BOTH,
-        LEFT_ONLY,
-        RIGHT_ONLY
-    }
-
-    enum State {
-        INITIALIZING,
-        TUNE_F,
-        TUNE_P,
-        TUNE_D,
-        TUNE_I,
-        VERIFY,
-        MOTOR_TRANSITION,
-        DONE,
-        ABORTED
-    }
-
+    private final ElapsedTime stateTimer = new ElapsedTime();
+    private final ElapsedTime settleTimer = new ElapsedTime();
+    private final int REQUIRED_CROSSINGS = 6;
     private State currentState = State.INITIALIZING;
     private TuningMode tuningMode = TuningMode.BOTH;
     private TargetMotor currentMotorTarget = TargetMotor.LEFT;
@@ -70,21 +50,20 @@ public class AutoTuning extends LinearOpMode {
 
     private double targetTPS;
     private double theoreticalMaxTPS;
-
-    private final ElapsedTime stateTimer = new ElapsedTime();
-    private final ElapsedTime settleTimer = new ElapsedTime();
-
     private double lastError = 0;
     private int crossingCount = 0;
-    private final int REQUIRED_CROSSINGS = 6;
     private double criticalP = 0;
 
-    /** Returns the motor currently targeted for tuning. */
+    /**
+     * Returns the motor currently targeted for tuning.
+     */
     private DcMotorEx getActiveMotor() {
         return (currentMotorTarget == TargetMotor.LEFT) ? leftMotor : rightMotor;
     }
 
-    /** Returns directional sign multiplier (+1.0 for left, -1.0 for right opposing spin). */
+    /**
+     * Returns directional sign multiplier (+1.0 for left, -1.0 for right opposing spin).
+     */
     private double getActiveMotorDirection() {
         return (currentMotorTarget == TargetMotor.LEFT) ? 1.0 : -1.0;
     }
@@ -101,7 +80,9 @@ public class AutoTuning extends LinearOpMode {
         getActiveMotor().setVelocityPIDFCoefficients(p, i, d, f);
     }
 
-    /** Stores the determined tuning coefficients for the active motor. */
+    /**
+     * Stores the determined tuning coefficients for the active motor.
+     */
     private void saveCurrentGains() {
         if (currentMotorTarget == TargetMotor.LEFT) {
             leftF = currentF;
@@ -116,7 +97,9 @@ public class AutoTuning extends LinearOpMode {
         }
     }
 
-    /** Resets intermediate tuning variables when transitioning between motors. */
+    /**
+     * Resets intermediate tuning variables when transitioning between motors.
+     */
     private void resetTuningVariablesForNextMotor() {
         currentP = 0;
         currentI = 0;
@@ -360,5 +343,28 @@ public class AutoTuning extends LinearOpMode {
 
         leftMotor.setPower(0);
         rightMotor.setPower(0);
+    }
+
+    enum TargetMotor {
+        LEFT,
+        RIGHT
+    }
+
+    enum TuningMode {
+        BOTH,
+        LEFT_ONLY,
+        RIGHT_ONLY
+    }
+
+    enum State {
+        INITIALIZING,
+        TUNE_F,
+        TUNE_P,
+        TUNE_D,
+        TUNE_I,
+        VERIFY,
+        MOTOR_TRANSITION,
+        DONE,
+        ABORTED
     }
 }

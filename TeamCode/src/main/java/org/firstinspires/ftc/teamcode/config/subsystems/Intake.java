@@ -36,7 +36,8 @@ public class Intake {
         initServos();
     }
 
-    public void update() {}
+    public void update() {
+    }
 
     /**
      * Initializes servo positions. Call during start() or init().
@@ -141,11 +142,7 @@ public class Intake {
                 runIntake(RobotConstants.INTAKE_SPEED * -gamepad.right_trigger);
             }
 
-            if (gamepad.right_trigger >= 0.05) {
-                setBlocker(true);
-            } else {
-                setBlocker(false);
-            }
+            setBlocker(gamepad.right_trigger >= 0.05);
         }).requiring(this);
     }
 

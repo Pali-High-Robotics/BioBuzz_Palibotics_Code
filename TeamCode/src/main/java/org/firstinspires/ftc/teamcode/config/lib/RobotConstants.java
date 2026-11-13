@@ -48,21 +48,8 @@ public class RobotConstants {
     public static final double AUTO_POST_LAUNCH1_WAIT_MS = 1500;
     public static final double AUTO_INTAKE_DWELL_MS = 1000;
     public static final double AUTO_FLOWER_INTAKE_DWELL_MS = 1000;
-
-    // Shooter Velocity PIDF Coefficients
-    public static double LEFT_SHOOTER_F = 12.7871;
-    public static double LEFT_SHOOTER_P = 12.8538;
-    public static double LEFT_SHOOTER_I = 0.7050;
-    public static double LEFT_SHOOTER_D = 0.0;
-
-    public static double RIGHT_SHOOTER_F = 15.4198;
-    public static double RIGHT_SHOOTER_P = 3.7401;
-    public static double RIGHT_SHOOTER_I = 0.0090;
-    public static double RIGHT_SHOOTER_D = 0.0;
-
     public static final double SHOOTER_SPEED = 0.27;
     public static final double SHOOTER_TARGET_VELOCITY = SHOOTER_SPEED * SHOOT_MOTOR_TPS;
-
     // Field Dimensions & Poses
     public static final double TILE_SIZE_INCHES = 24.0;
     public static final double HALF_TILE_INCHES = 12.0;
@@ -71,6 +58,18 @@ public class RobotConstants {
     public static final Pose leftRedShoot = new Pose(58.33, 129.83, Math.toRadians(90));
     public static final Pose rightBlueShoot = new Pose(81.91, 129.83, Math.toRadians(90));
     public static final Pose leftBlueShoot = new Pose(81.91, 11.66, Math.toRadians(270));
+    // Shooter Velocity PIDF Coefficients
+    public static double LEFT_SHOOTER_F = 12.7871;
+    public static double LEFT_SHOOTER_P = 12.8538;
+    public static double LEFT_SHOOTER_I = 0.7050;
+    public static double LEFT_SHOOTER_D = 0.0;
+    public static double RIGHT_SHOOTER_F = 15.4198;
+    public static double RIGHT_SHOOTER_P = 3.7401;
+    public static double RIGHT_SHOOTER_I = 0.0090;
+    public static double RIGHT_SHOOTER_D = 0.0;
+
+    private RobotConstants() {
+    }
 
     /**
      * Returns the predefined shooting poses for the specified alliance.
@@ -85,6 +84,4 @@ public class RobotConstants {
             return new Pose[]{rightBlueShoot, leftBlueShoot};
         }
     }
-
-    private RobotConstants() {}
 }

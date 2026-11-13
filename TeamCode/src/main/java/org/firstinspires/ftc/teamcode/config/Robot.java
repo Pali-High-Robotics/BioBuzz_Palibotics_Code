@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.config;
 
-import java.util.List;
-
 import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,6 +9,8 @@ import org.firstinspires.ftc.teamcode.config.lib.RobotConstants;
 import org.firstinspires.ftc.teamcode.config.subsystems.Chassis;
 import org.firstinspires.ftc.teamcode.config.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.config.subsystems.Shooter;
+
+import java.util.List;
 
 /**
  * Main robot container combining all subsystems (chassis, intake, shooter)

@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.disabledfiles;
 
-import com.pedropathing.api.Paths;
-
-import com.pedropathing.api.PoseFactory;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.math.Pose;
-import com.pedropathing.paths.Path;
-import com.pedropathing.ivy.Command;
-import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
+
+import com.pedropathing.api.Paths;
+import com.pedropathing.api.PoseFactory;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.Scheduler;
+import com.pedropathing.math.Pose;
+import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,15 +21,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Disabled
 public class AutoPath extends LinearOpMode {
 
-    private Follower follower;
-
     private final PoseFactory poseFactory = PoseFactory.degrees();
-
     private final Pose start = poseFactory.of(131.75, 131.75, 270);
     private final Pose park = poseFactory.of(126.75, 106.75, 270);
     private final Pose point2 = poseFactory.of(83.75, 105.75, -124.5923);
     private final Pose point2Control1 = poseFactory.of(103.75, 134.75, 0);
     private final Pose point3 = poseFactory.of(83.75, 127.75, 270);
+    private Follower follower;
 
     // Autonomous routine
     public Command autoRoutine() {

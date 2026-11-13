@@ -20,6 +20,9 @@ public class PoseStorage {
      */
     public static Pose savedPose = RobotConstants.defaultPose;
 
+    private PoseStorage() {
+    }
+
     /**
      * Saves the robot's current pose for subsequent OpModes to restore.
      *
@@ -44,6 +47,4 @@ public class PoseStorage {
     public static void reset() {
         savedPose = RobotConstants.defaultPose;
     }
-
-    private PoseStorage() {}
 }
